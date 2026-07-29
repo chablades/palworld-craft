@@ -68,7 +68,7 @@ export function RecipeSearch({ onSelect, linkToCalculator = true }: RecipeSearch
             return (
               <li key={name}>
                 <Link
-                  href={`/calculator?item=${encodeURIComponent(name)}`}
+                  href={`/?item=${encodeURIComponent(name)}`}
                   className={rowClass}
                 >
                   {inner}

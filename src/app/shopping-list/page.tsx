@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { ShoppingList } from "@/components/ShoppingList";
 
 export default function ShoppingListPage() {
@@ -9,7 +10,9 @@ export default function ShoppingListPage() {
           Batch multiple craft targets into one combined materials list.
         </p>
       </div>
-      <ShoppingList />
+      <Suspense fallback={<p className="text-sm text-muted-foreground">Loading shopping list…</p>}>
+        <ShoppingList />
+      </Suspense>
     </div>
   );
 }

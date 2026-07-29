@@ -2,15 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Anvil, GitFork, Home, ListChecks, Moon, Sun } from "lucide-react";
+import { Anvil, GitFork, ListChecks, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { useElementTheme } from "@/components/ThemeProvider";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ELEMENT_THEMES, type ElementThemeId } from "@/lib/themes";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/calculator", label: "Calculator", icon: Anvil },
+  { href: "/", label: "Calculator", icon: Anvil },
   { href: "/tree", label: "Crafting Tree", icon: GitFork },
   { href: "/shopping-list", label: "Shopping List", icon: ListChecks },
 ];
@@ -18,6 +26,7 @@ const links = [
 export function SiteHeader() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
+  const { elementTheme, setElementTheme } = useElementTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
@@ -59,10 +68,32 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {mounted ? (
+            <Select
+              value={elementTheme}
+              onValueChange={(value) => setElementTheme(value as ElementThemeId)}
+            >
+              <SelectTrigger
+                className="h-9 w-[8.5rem] sm:w-[9.5rem]"
+                aria-label="Element theme"
+              >
+                <SelectValue placeholder="Theme" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                {ELEMENT_THEMES.map((t) => (
+                  <SelectItem key={t.id} value={t.id}>
+                    {t.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <div className="h-9 w-[8.5rem] rounded-md border border-input sm:w-[9.5rem]" />
+          )}
           <Button
             variant="outline"
             size="icon"
-            aria-label="Toggle theme"
+            aria-label="Toggle light and dark mode"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           >
             {mounted && theme === "dark" ? (

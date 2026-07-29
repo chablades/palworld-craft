@@ -1,5 +1,5 @@
 import type { RecipeBookData, RecipeEntry } from "@/lib/types";
-import { validateRecipeBook } from "@/lib/types";
+import { isRecipe, validateRecipeBook } from "@/lib/types";
 
 /**
  * Parse a simple recipe DSL into RecipeBookData.
@@ -38,7 +38,7 @@ export function parseRecipeDsl(text: string): RecipeBookData {
     const ingMatch = line.match(/^(.+?):\s*(\d+)\s*$/);
     if (ingMatch && current) {
       const recipe = recipes[current];
-      if (recipe !== "RAW" && typeof recipe === "object") {
+      if (isRecipe(recipe)) {
         recipe.ingredients[ingMatch[1].trim()] = Number(ingMatch[2]);
       }
       continue;
@@ -59,6 +59,9 @@ export function parseRecipeDsl(text: string): RecipeBookData {
  * Expects lines similar to:
  *   "Item": Recipe("Item", ("Ing", 1), ("Other", 2)),
  *   "Coal": "RAW",
+ *
+ * Note: richer RAW objects ({ type: "RAW", sources, drops }) are JSON-only;
+ * this converter always emits plain "RAW" strings.
  */
 export function parsePythonishRecipes(text: string): RecipeBookData {
   const recipes: Record<string, RecipeEntry> = {};

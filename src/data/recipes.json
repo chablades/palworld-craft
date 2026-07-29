@@ -1,6 +1,7 @@
 {
   "recipes": {
     "AI Core": {
+      "station": "Production Assembly Line II",
       "ingredients": {
         "Computer": 5,
         "Solarite Ingot": 10,
@@ -8,28 +9,120 @@
         "Ancient Civilization Core": 1
       }
     },
-    "Ancient Civilization Core": "RAW",
+    "Ancient Civilization Core": {
+      "type": "RAW",
+      "sources": ["Tower bosses", "Legendary chests", "Dungeons"],
+      "drops": ["Blazamut Ryu", "Xenovader"]
+    },
+    "Ancient Civilization Parts": {
+      "type": "RAW",
+      "sources": ["Chests", "Dungeons", "Tower bosses"],
+      "drops": ["Astegon", "Jetragon", "Necromus"]
+    },
+    "Arrow": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 1,
+        "Stone": 1
+      }
+    },
+    "Assault Rifle": {
+      "station": "Weapon Assembly Line II",
+      "ingredients": {
+        "Refined Ingot": 40,
+        "Polymer": 10,
+        "Carbon Fiber": 30
+      }
+    },
+    "Assault Rifle Ammo": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Refined Ingot": 1,
+        "Gunpowder": 2
+      }
+    },
+    "Baked Berries": {
+      "station": "Campfire",
+      "ingredients": {
+        "Red Berries": 1
+      }
+    },
     "Bio Battery": {
+      "station": "Production Assembly Line",
       "ingredients": {
         "Electric Organ": 1,
         "Refined Ingot": 1,
         "Carbon Fiber": 1
       }
     },
+    "Bone": {
+      "type": "RAW",
+      "sources": ["Hunting", "Ranch"],
+      "drops": ["Dinossom", "Relaxaurus", "Mammorest"]
+    },
     "Carbon Fiber": {
+      "station": "Production Assembly Line",
       "ingredients": {
         "Coal": 2,
         "Flame Organ": 1
       }
     },
+    "Cement": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Stone": 50,
+        "Bone": 1,
+        "Pal Fluids": 1
+      }
+    },
+    "Charcoal": {
+      "station": "Primitive Furnace",
+      "ingredients": {
+        "Wood": 2
+      }
+    },
     "Circuit Board": {
+      "station": "Production Assembly Line",
       "ingredients": {
         "Pure Quartz": 2,
         "Polymer": 1
       }
     },
-    "Coal": "RAW",
+    "Cloth": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wool": 2
+      }
+    },
+    "Cloth Outfit": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Cloth": 2
+      }
+    },
+    "Coal": {
+      "type": "RAW",
+      "sources": ["Mining", "Volcano region", "Coal Mine"],
+      "drops": ["Digtoise", "Dumud"]
+    },
+    "Coarse Ammo": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Ingot": 1,
+        "Gunpowder": 1
+      }
+    },
+    "Common Shield": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Paldium Fragment": 10,
+        "Wood": 20,
+        "Stone": 20,
+        "Fiber": 10
+      }
+    },
     "Computer": {
+      "station": "Production Assembly Line II",
       "ingredients": {
         "Circuit Board": 2,
         "Plasteel": 3,
@@ -38,27 +131,327 @@
       }
     },
     "Corrosive Solvent": {
+      "station": "Production Assembly Line",
       "ingredients": {
         "Venom Gland": 1,
         "Sulfur": 1
       }
     },
-    "Electric Organ": "RAW",
-    "Flame Organ": "RAW",
-    "Hexolite": "RAW",
-    "High Quality Pal Oil": "RAW",
-    "Plasteel": "RAW",
+    "Crossbow": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Wood": 50,
+        "Stone": 40,
+        "Ingot": 10,
+        "Nail": 5
+      }
+    },
+    "Crude Oil": {
+      "type": "RAW",
+      "sources": ["Oil fields", "Crude Oil Extractor"]
+    },
+    "Electric Organ": {
+      "type": "RAW",
+      "sources": ["Electric-type Pals", "Chests"],
+      "drops": ["Sparkit", "Univolt", "Beakon", "Orserk"]
+    },
+    "Fiber": {
+      "type": "RAW",
+      "sources": ["Trees", "Crusher"],
+      "drops": ["Tanzee", "Caprity"]
+    },
+    "Fire Arrow": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 3,
+        "Stone": 3,
+        "Flame Organ": 1
+      }
+    },
+    "Flame Organ": {
+      "type": "RAW",
+      "sources": ["Fire-type Pals", "Chests"],
+      "drops": ["Foxparks", "Arsox", "Blazehowl", "Blazamut"]
+    },
+    "Giga Sphere": {
+      "station": "Sphere Workbench",
+      "ingredients": {
+        "Paldium Fragment": 2,
+        "Ingot": 2,
+        "Wood": 7,
+        "Stone": 7
+      }
+    },
+    "Gunpowder": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Charcoal": 2,
+        "Sulfur": 1
+      }
+    },
+    "Handgun": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Ingot": 50,
+        "High Quality Pal Oil": 15
+      }
+    },
+    "Handgun Ammo": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Ingot": 1,
+        "Gunpowder": 1
+      }
+    },
+    "Hexolite": {
+      "type": "RAW",
+      "sources": ["Feybreak Island", "Mining"]
+    },
+    "High Quality Cloth": {
+      "station": "Production Assembly Line",
+      "ingredients": {
+        "Wool": 10
+      }
+    },
+    "High Quality Pal Oil": {
+      "type": "RAW",
+      "sources": ["Oil-producing Pals", "Chests"],
+      "drops": ["Dumud", "Relaxaurus", "Jormuntide"]
+    },
+    "Hyper Sphere": {
+      "station": "Sphere Assembly Line",
+      "ingredients": {
+        "Paldium Fragment": 3,
+        "Ingot": 3,
+        "Wood": 10,
+        "Cement": 2
+      }
+    },
+    "Ice Organ": {
+      "type": "RAW",
+      "sources": ["Ice-type Pals", "Snow biomes"],
+      "drops": ["Pengullet", "Reindrix", "Frostallion"]
+    },
+    "Ingot": {
+      "station": "Primitive Furnace",
+      "ingredients": {
+        "Ore": 2
+      }
+    },
+    "Leather": {
+      "type": "RAW",
+      "sources": ["Hunting", "Butchering"],
+      "drops": ["Rushoar", "Direhowl", "Melpaca", "Galeclaw"]
+    },
+    "Legendary Sphere": {
+      "station": "Sphere Assembly Line II",
+      "ingredients": {
+        "Paldium Fragment": 10,
+        "Pal Metal Ingot": 5,
+        "Carbon Fiber": 3,
+        "Cement": 5
+      }
+    },
+    "Mega Sphere": {
+      "station": "Sphere Workbench",
+      "ingredients": {
+        "Paldium Fragment": 1,
+        "Ingot": 1,
+        "Wood": 5,
+        "Stone": 5
+      }
+    },
+    "Metal Armor": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Ingot": 30,
+        "Leather": 10,
+        "Cloth": 5
+      }
+    },
+    "Metal Helm": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Ingot": 20,
+        "Paldium Fragment": 10
+      }
+    },
+    "Musket": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Ingot": 25,
+        "High Quality Pal Oil": 5,
+        "Wood": 30
+      }
+    },
+    "Nail": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Ingot": 1
+      }
+    },
+    "Old Bow": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 30,
+        "Stone": 5,
+        "Fiber": 15
+      }
+    },
+    "Ore": {
+      "type": "RAW",
+      "sources": ["Mining", "Ore deposits", "Ore Mining Site"],
+      "drops": ["Digtoise", "Dumud"]
+    },
+    "Pal Fluids": {
+      "type": "RAW",
+      "sources": ["Water-type Pals"],
+      "drops": ["Celaray", "Surfent", "Jormuntide"]
+    },
+    "Pal Metal Armor": {
+      "station": "Production Assembly Line II",
+      "ingredients": {
+        "Pal Metal Ingot": 20,
+        "Leather": 20,
+        "High Quality Cloth": 4
+      }
+    },
+    "Pal Metal Helm": {
+      "station": "Production Assembly Line II",
+      "ingredients": {
+        "Pal Metal Ingot": 20,
+        "Paldium Fragment": 20
+      }
+    },
+    "Pal Metal Ingot": {
+      "station": "Electric Furnace",
+      "ingredients": {
+        "Refined Ingot": 4,
+        "Paldium Fragment": 2
+      }
+    },
+    "Pal Sphere": {
+      "station": "Sphere Workbench",
+      "ingredients": {
+        "Paldium Fragment": 1,
+        "Wood": 3,
+        "Stone": 3
+      }
+    },
+    "Paldium Fragment": {
+      "type": "RAW",
+      "sources": ["Paldium deposits", "Crusher", "Mining stone"]
+    },
+    "Pelt Armor": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Leather": 10
+      }
+    },
+    "Plasteel": {
+      "station": "Production Assembly Line II",
+      "ingredients": {
+        "Crude Oil": 5,
+        "Paldium Fragment": 5,
+        "Ore": 10
+      }
+    },
+    "Poison Arrow": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 3,
+        "Stone": 3,
+        "Venom Gland": 1
+      }
+    },
     "Polymer": {
+      "station": "Production Assembly Line",
       "ingredients": {
         "High Quality Pal Oil": 2,
         "Sulfur": 1
       }
     },
-    "Pure Quartz": "RAW",
-    "Refined Ingot": "RAW",
-    "Solarite Ingot": "RAW",
-    "Sulfur": "RAW",
+    "Pure Quartz": {
+      "type": "RAW",
+      "sources": ["Desert / snow mining", "Quartz nodes"]
+    },
+    "Red Berries": {
+      "type": "RAW",
+      "sources": ["Berry bushes", "Berry Plantation"],
+      "drops": ["Caprity", "Gumoss"]
+    },
+    "Refined Ingot": {
+      "station": "Improved Furnace",
+      "ingredients": {
+        "Ore": 2,
+        "Coal": 2
+      }
+    },
+    "Refined Metal Armor": {
+      "station": "Production Assembly Line",
+      "ingredients": {
+        "Refined Ingot": 30,
+        "Leather": 15,
+        "High Quality Cloth": 2
+      }
+    },
+    "Refined Metal Helm": {
+      "station": "Production Assembly Line",
+      "ingredients": {
+        "Refined Ingot": 20,
+        "Paldium Fragment": 15
+      }
+    },
+    "Rifle Ammo": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Refined Ingot": 1,
+        "Gunpowder": 2
+      }
+    },
+    "Single-shot Rifle": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Refined Ingot": 20,
+        "Polymer": 5
+      }
+    },
+    "Solarite Ingot": {
+      "type": "RAW",
+      "sources": ["Feybreak Island", "Solarite nodes"]
+    },
+    "Stone": {
+      "type": "RAW",
+      "sources": ["Mining", "Stone Pit"],
+      "drops": ["Digtoise", "Dumud"]
+    },
+    "Stone Axe": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Stone": 5,
+        "Wood": 5
+      }
+    },
+    "Stone Pickaxe": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Stone": 5,
+        "Wood": 5
+      }
+    },
+    "Stone Spear": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 18,
+        "Stone": 6
+      }
+    },
+    "Sulfur": {
+      "type": "RAW",
+      "sources": ["Volcano region", "Sulfur Mine"]
+    },
     "Thermal Core": {
+      "station": "Production Assembly Line II",
       "ingredients": {
         "Flame Organ": 4,
         "Coal": 8,
@@ -66,6 +459,35 @@
         "Hexolite": 2
       }
     },
-    "Venom Gland": "RAW"
+    "Ultra Sphere": {
+      "station": "Sphere Assembly Line II",
+      "ingredients": {
+        "Paldium Fragment": 5,
+        "Refined Ingot": 5,
+        "Carbon Fiber": 2,
+        "Cement": 3
+      }
+    },
+    "Venom Gland": {
+      "type": "RAW",
+      "sources": ["Poison-type Pals", "Chests"],
+      "drops": ["Flopie", "Killamari", "Menasting", "Shadowbeak"]
+    },
+    "Wood": {
+      "type": "RAW",
+      "sources": ["Logging", "Logging Site"],
+      "drops": ["Tanzee", "Vaelet"]
+    },
+    "Wool": {
+      "type": "RAW",
+      "sources": ["Ranch", "Shearing"],
+      "drops": ["Lamball", "Melpaca", "Kingpaca"]
+    },
+    "Wooden Club": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 5
+      }
+    }
   }
 }

@@ -4,10 +4,13 @@ Next.js + TypeScript website that expands Palworld crafting recipes into raw mat
 
 ## Features
 
-- **Recipe Calculator** — Select an item + quantity, get sorted RAW materials and crafting list
+- **Recipe Calculator** — Select an item + quantity, get raw materials and a bottom-up crafting order
+- **Inventory offsets** — Enter amounts you already own; remaining needs update automatically
 - **Search / Filter** — Browse crafted vs raw items
 - **Visual Crafting Tree** — Dependency graph via React Flow
-- **Batch Shopping List** — Queue multiple targets and merge costs
+- **Batch Shopping List** — Queue multiple targets and merge costs (persisted in `localStorage`)
+- **Share & copy** — Query-string plan URLs plus plain text / Markdown export
+- **Material sources** — Sources and pal-drop hints on raw materials
 - **JSON reader + converter CLI** — Expand the recipe book without touching app code
 
 ## Stack
@@ -28,24 +31,53 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Recipe JSON format
 
-See [`src/data/recipes.json`](src/data/recipes.json):
+See [`src/data/recipes.json`](src/data/recipes.json).
+
+### Craftables
+
+Objects with an `ingredients` map and optional `station`:
 
 ```json
 {
-  "recipes": {
-    "Carbon Fiber": {
-      "ingredients": {
-        "Coal": 2,
-        "Flame Organ": 1
-      }
-    },
-    "Coal": "RAW"
+  "Carbon Fiber": {
+    "station": "Production Assembly Line",
+    "ingredients": {
+      "Coal": 2,
+      "Flame Organ": 1
+    }
   }
 }
 ```
 
-- Craftable items are objects with an `ingredients` map
-- Base materials use the string `"RAW"`
+### Raw materials
+
+Backward compatible: the string `"RAW"` still works.
+
+Richer form (optional metadata):
+
+```json
+{
+  "Coal": {
+    "type": "RAW",
+    "sources": ["Mining", "Ore deposits", "Coal Mine"],
+    "drops": ["Digtoise", "Dumud"]
+  }
+}
+```
+
+- `sources` — where to gather the material (mining, chests, merchants, etc.)
+- `drops` — pals known to drop it
+- Plain `"RAW"` strings remain valid and need no migration
+
+## Shareable URLs
+
+**Calculator:** `/calculator?item=Thermal%20Core&qty=20&inv=Coal:40,Flame%20Organ:5`
+
+**Shopping list:** `/shopping-list?list=Thermal%20Core:20,Computer:2&inv=Coal:40`
+
+- `item` / `qty` — single calculator target
+- `list` — comma-separated `Name:amount` pairs for the shopping queue
+- `inv` — owned inventory as `Name:amount` pairs (shared across calculator and shopping list via `localStorage`)
 
 ## Convert recipes to JSON
 
@@ -65,6 +97,8 @@ npm run convert-recipes -- --input recipes.example.txt --format dsl --out src/da
 ```
 
 Python-ish Recipe() snippets are also supported with `--format python`.
+
+The DSL converter still emits plain `"RAW"` strings. Enrich sources/drops by editing the JSON afterward.
 
 ## Deploy on Vercel
 
@@ -86,7 +120,7 @@ src/
   app/                 # Pages (home, calculator, tree, shopping-list)
   components/          # Feature UI + shadcn primitives
   data/recipes.json    # Recipe book
-  lib/                 # Types, calculator, JSON reader, converter
+  lib/                 # Types, calculator, share/storage helpers, converter
 scripts/
   convert-recipes.ts   # CLI converter
 ```

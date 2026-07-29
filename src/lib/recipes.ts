@@ -1,14 +1,16 @@
 import recipeData from "@/data/recipes.json";
 import type {
   CalculationResult,
+  InventoryMap,
+  OffsetLine,
   RecipeBookData,
   RecipeEntry,
   ShoppingListItem,
   TreeNode,
 } from "@/lib/types";
-import { isRaw, isRecipe, validateRecipeBook } from "@/lib/types";
+import { getRawMeta, isRaw, isRecipe, validateRecipeBook } from "@/lib/types";
 
-export { validateRecipeBook };
+export { getRawMeta, validateRecipeBook };
 
 const book = recipeData as RecipeBookData;
 
@@ -30,6 +32,11 @@ export function getRawNames(): string[] {
 
 export function getRecipeEntry(name: string): RecipeEntry | undefined {
   return book.recipes[name];
+}
+
+export function getStation(name: string): string | undefined {
+  const entry = book.recipes[name];
+  return isRecipe(entry) ? entry.station : undefined;
 }
 
 export function searchRecipes(
@@ -141,6 +148,105 @@ export function sortedEntries(counts: Record<string, number>): [string, number][
   return Object.entries(counts).sort(([a], [b]) => a.localeCompare(b));
 }
 
+function toOffsetLine(
+  name: string,
+  required: number,
+  inventory: InventoryMap,
+): OffsetLine {
+  const owned = Math.max(0, inventory[name] ?? 0);
+  return {
+    name,
+    required,
+    owned,
+    remaining: Math.max(0, required - owned),
+  };
+}
+
+/**
+ * Subtract owned inventory from required counts (alphabetical).
+ * Remaining is never negative.
+ */
+export function applyInventoryOffsets(
+  counts: Record<string, number>,
+  inventory: InventoryMap,
+): OffsetLine[] {
+  return sortedEntries(counts).map(([name, required]) =>
+    toOffsetLine(name, required, inventory),
+  );
+}
+
+/**
+ * Inventory-aware craft lines in bottom-up dependency order.
+ */
+export function applyCraftOffsets(
+  crafts: Record<string, number>,
+  inventory: InventoryMap,
+): OffsetLine[] {
+  return sortedCraftEntries(crafts).map(([name, required]) =>
+    toOffsetLine(name, required, inventory),
+  );
+}
+
+/**
+ * Bottom-up craft order: ingredients (leaves) before dependents.
+ * Falls back to alphabetical when there is no dependency edge.
+ */
+export function sortedCraftEntries(
+  crafts: Record<string, number>,
+  recipes: Record<string, RecipeEntry> = book.recipes,
+): [string, number][] {
+  const names = Object.keys(crafts);
+  if (names.length <= 1) {
+    return names.map((name) => [name, crafts[name]] as [string, number]);
+  }
+
+  const nameSet = new Set(names);
+  const indegree = new Map<string, number>();
+  const dependents = new Map<string, string[]>();
+
+  for (const name of names) {
+    indegree.set(name, 0);
+    dependents.set(name, []);
+  }
+
+  for (const name of names) {
+    const entry = recipes[name];
+    if (!isRecipe(entry)) continue;
+    for (const ingredient of Object.keys(entry.ingredients)) {
+      if (!nameSet.has(ingredient)) continue;
+      dependents.get(ingredient)!.push(name);
+      indegree.set(name, (indegree.get(name) ?? 0) + 1);
+    }
+  }
+
+  const queue = names
+    .filter((name) => (indegree.get(name) ?? 0) === 0)
+    .sort((a, b) => a.localeCompare(b));
+  const ordered: string[] = [];
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    ordered.push(current);
+    const next = (dependents.get(current) ?? []).slice().sort((a, b) => a.localeCompare(b));
+    for (const dep of next) {
+      const remaining = (indegree.get(dep) ?? 0) - 1;
+      indegree.set(dep, remaining);
+      if (remaining === 0) queue.push(dep);
+    }
+    queue.sort((a, b) => a.localeCompare(b));
+  }
+
+  // Cycle fallback: append any leftover alphabetically.
+  if (ordered.length < names.length) {
+    const leftover = names
+      .filter((name) => !ordered.includes(name))
+      .sort((a, b) => a.localeCompare(b));
+    ordered.push(...leftover);
+  }
+
+  return ordered.map((name) => [name, crafts[name]]);
+}
+
 /**
  * Build a tree suitable for visual crafting graph display.
  */
@@ -176,4 +282,3 @@ export function buildCraftingTree(
     ),
   };
 }
-

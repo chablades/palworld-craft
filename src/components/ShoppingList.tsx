@@ -1,7 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Check, Copy, Link2, Plus, Trash2 } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { InventoryPanel } from "@/components/InventoryPanel";
+import { ResultLine } from "@/components/ResultLine";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,21 +17,97 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { calculateBatch, getCraftableNames, sortedEntries } from "@/lib/recipes";
-import type { ShoppingListItem } from "@/lib/types";
+import {
+  applyCraftOffsets,
+  applyInventoryOffsets,
+  calculateBatch,
+  getCraftableNames,
+} from "@/lib/recipes";
+import {
+  buildShareSearchParams,
+  copyText,
+  formatResultsMarkdown,
+  formatResultsPlain,
+  parseInventoryParam,
+  parseListParam,
+} from "@/lib/share";
+import {
+  loadInventory,
+  loadShoppingList,
+  saveInventory,
+  saveShoppingList,
+} from "@/lib/storage";
+import type { InventoryMap, ShoppingListItem } from "@/lib/types";
+
+const DEFAULT_ITEMS: ShoppingListItem[] = [
+  { name: "Thermal Core", amount: 20 },
+  { name: "Computer", amount: 2 },
+];
 
 export function ShoppingList() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const craftables = useMemo(() => getCraftableNames(), []);
-  const [items, setItems] = useState<ShoppingListItem[]>([
-    { name: "Thermal Core", amount: 20 },
-    { name: "Computer", amount: 2 },
-  ]);
+
+  const urlList = parseListParam(searchParams.get("list"));
+  const urlInventory = parseInventoryParam(searchParams.get("inv"));
+
+  const [items, setItems] = useState<ShoppingListItem[]>(DEFAULT_ITEMS);
   const [draftName, setDraftName] = useState(craftables[0] ?? "");
   const [draftAmount, setDraftAmount] = useState(1);
+  const [inventory, setInventory] = useState<InventoryMap>({});
+  const [hydrated, setHydrated] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<"idle" | "plain" | "md" | "link">("idle");
+
+  useEffect(() => {
+    const storedItems = loadShoppingList(DEFAULT_ITEMS);
+    const storedInventory = loadInventory();
+    const nextItems =
+      urlList.length > 0
+        ? urlList.filter((item) => craftables.includes(item.name))
+        : storedItems.filter((item) => craftables.includes(item.name));
+    setItems(nextItems.length > 0 ? nextItems : DEFAULT_ITEMS.filter((i) => craftables.includes(i.name)));
+    setInventory({ ...storedInventory, ...urlInventory });
+    setHydrated(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    saveShoppingList(items);
+  }, [items, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    saveInventory(inventory);
+  }, [inventory, hydrated]);
 
   const result = useMemo(() => calculateBatch(items), [items]);
-  const raws = sortedEntries(result.raws);
-  const crafts = sortedEntries(result.crafts);
+  const rawLines = useMemo(
+    () => applyInventoryOffsets(result.raws, inventory),
+    [result, inventory],
+  );
+  const craftLines = useMemo(
+    () => applyCraftOffsets(result.crafts, inventory),
+    [result, inventory],
+  );
+
+  const inventoryNames = useMemo(() => {
+    const names = new Set<string>();
+    for (const line of rawLines) names.add(line.name);
+    for (const line of craftLines) names.add(line.name);
+    return [...names].sort((a, b) => a.localeCompare(b));
+  }, [rawLines, craftLines]);
+
+  function setOwned(name: string, owned: number) {
+    setInventory((prev) => {
+      const next = { ...prev };
+      if (owned <= 0) delete next[name];
+      else next[name] = owned;
+      return next;
+    });
+  }
 
   function addItem() {
     if (!draftName || draftAmount <= 0) return;
@@ -53,6 +132,41 @@ export function ShoppingList() {
     );
   }
 
+  function syncUrl(nextItems: ShoppingListItem[], nextInventory: InventoryMap) {
+    const params = buildShareSearchParams({
+      list: nextItems,
+      inventory: nextInventory,
+    });
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }
+
+  async function handleCopy(format: "plain" | "md") {
+    const title =
+      items.length === 0
+        ? "Shopping list"
+        : `Shopping list (${items.map((i) => `${i.amount}× ${i.name}`).join(", ")})`;
+    const payload =
+      format === "plain"
+        ? formatResultsPlain({ title, raws: rawLines, crafts: craftLines })
+        : formatResultsMarkdown({ title, raws: rawLines, crafts: craftLines });
+    const ok = await copyText(payload);
+    if (ok) {
+      setCopyStatus(format);
+      window.setTimeout(() => setCopyStatus("idle"), 1500);
+    }
+  }
+
+  async function handleCopyLink() {
+    syncUrl(items, inventory);
+    const params = buildShareSearchParams({ list: items, inventory });
+    const url = `${window.location.origin}${pathname}?${params.toString()}`;
+    const ok = await copyText(url);
+    if (ok) {
+      setCopyStatus("link");
+      window.setTimeout(() => setCopyStatus("idle"), 1500);
+    }
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -60,7 +174,7 @@ export function ShoppingList() {
           <CardTitle>Batch Shopping List</CardTitle>
           <CardDescription>
             Queue multiple craft targets and get a combined raw materials list plus crafting
-            steps.
+            steps. List and inventory persist in this browser.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -127,6 +241,35 @@ export function ShoppingList() {
               <li className="text-sm text-muted-foreground">Add craftable items to begin.</li>
             )}
           </ul>
+
+          <InventoryPanel
+            itemNames={inventoryNames}
+            inventory={inventory}
+            onChange={setOwned}
+          />
+
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={() => handleCopy("plain")}>
+              {copyStatus === "plain" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              Copy text
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={() => handleCopy("md")}>
+              {copyStatus === "md" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              Copy Markdown
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={handleCopyLink}>
+              {copyStatus === "link" ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
+              Copy share link
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => syncUrl(items, inventory)}
+            >
+              Update URL
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
@@ -135,21 +278,15 @@ export function ShoppingList() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               Combined Raw Materials
-              <Badge variant="raw">{raws.length}</Badge>
+              <Badge variant="raw">{rawLines.length}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              {raws.map(([name, qty]) => (
-                <li
-                  key={name}
-                  className="flex items-center justify-between rounded-md border border-border/50 px-3 py-2 text-sm"
-                >
-                  <span>{name}</span>
-                  <span className="font-mono font-semibold tabular-nums">{qty}</span>
-                </li>
+              {rawLines.map((line) => (
+                <ResultLine key={line.name} line={line} showMeta />
               ))}
-              {raws.length === 0 && (
+              {rawLines.length === 0 && (
                 <li className="text-sm text-muted-foreground">No raw materials yet.</li>
               )}
             </ul>
@@ -159,22 +296,21 @@ export function ShoppingList() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              Combined Crafting List
-              <Badge variant="crafted">{crafts.length}</Badge>
+              Combined Crafting Order
+              <Badge variant="crafted">{craftLines.length}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
-              {crafts.map(([name, qty]) => (
-                <li
-                  key={name}
-                  className="flex items-center justify-between rounded-md border border-border/50 px-3 py-2 text-sm"
-                >
-                  <span>{name}</span>
-                  <span className="font-mono font-semibold tabular-nums">{qty}</span>
-                </li>
+              {craftLines.map((line, index) => (
+                <ResultLine
+                  key={line.name}
+                  line={line}
+                  showStation
+                  step={index + 1}
+                />
               ))}
-              {crafts.length === 0 && (
+              {craftLines.length === 0 && (
                 <li className="text-sm text-muted-foreground">No crafts yet.</li>
               )}
             </ul>
