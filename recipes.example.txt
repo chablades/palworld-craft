@@ -1,0 +1,54 @@
+# Example recipe DSL for the converter CLI
+# Run: npm run convert-recipes -- --input recipes.example.txt --format dsl
+
+Ancient Civilization Core = RAW
+Coal = RAW
+Electric Organ = RAW
+Flame Organ = RAW
+Hexolite = RAW
+High Quality Pal Oil = RAW
+Plasteel = RAW
+Pure Quartz = RAW
+Refined Ingot = RAW
+Solarite Ingot = RAW
+Sulfur = RAW
+Venom Gland = RAW
+
+Carbon Fiber:
+  Coal: 2
+  Flame Organ: 1
+
+Polymer:
+  High Quality Pal Oil: 2
+  Sulfur: 1
+
+Circuit Board:
+  Pure Quartz: 2
+  Polymer: 1
+
+Bio Battery:
+  Electric Organ: 1
+  Refined Ingot: 1
+  Carbon Fiber: 1
+
+Corrosive Solvent:
+  Venom Gland: 1
+  Sulfur: 1
+
+Thermal Core:
+  Flame Organ: 4
+  Coal: 8
+  Corrosive Solvent: 2
+  Hexolite: 2
+
+Computer:
+  Circuit Board: 2
+  Plasteel: 3
+  Bio Battery: 2
+  Carbon Fiber: 2
+
+AI Core:
+  Computer: 5
+  Solarite Ingot: 10
+  Thermal Core: 2
+  Ancient Civilization Core: 1
