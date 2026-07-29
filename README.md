@@ -7,10 +7,16 @@ Next.js + TypeScript website that expands Palworld crafting recipes into raw mat
 - **Recipe Calculator** — Select an item + quantity, get raw materials and a bottom-up crafting order
 - **Inventory offsets** — Enter amounts you already own; remaining needs update automatically
 - **Search / Filter** — Browse crafted vs raw items
-- **Visual Crafting Tree** — Dependency graph via React Flow
+- **Visual Crafting Tree** — Dependency graph via React Flow (`/tree?item=...`)
 - **Batch Shopping List** — Queue multiple targets and merge costs (persisted in `localStorage`)
+- **Compare** — Side-by-side material costs for two craftables
+- **Per-item pages** — Dedicated recipe pages at `/item/...`
+- **Efficiency tips** — Station and workflow hints on calculator and shopping list
+- **Favorites / checklists** — Star items and track shopping progress
 - **Share & copy** — Query-string plan URLs plus plain text / Markdown export
 - **Material sources** — Sources and pal-drop hints on raw materials
+- **Game version stamp** — Footer shows which Palworld patch the data targets
+- **Contribute docs** — CONTRIBUTING.md and `/contribute` for recipe PRs
 - **JSON reader + converter CLI** — Expand the recipe book without touching app code
 
 ## Stack

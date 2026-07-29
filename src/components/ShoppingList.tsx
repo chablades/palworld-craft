@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check, Copy, Link2, Plus, Trash2 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { EfficiencyTips } from "@/components/EfficiencyTips";
 import { InventoryPanel } from "@/components/InventoryPanel";
 import { ItemIcon } from "@/components/ItemIcon";
 import { ResultLine } from "@/components/ResultLine";
@@ -302,6 +303,8 @@ export function ShoppingList() {
           </div>
         </CardContent>
       </Card>
+
+      <EfficiencyTips crafts={result.crafts} />
 
       <div className="grid gap-4 md:grid-cols-2 print:grid-cols-1">
         <Card className="print:break-inside-avoid">

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { CraftingTree } from "@/components/CraftingTree";
 
 export default function TreePage() {
@@ -9,7 +10,9 @@ export default function TreePage() {
           Inspect the full ingredient dependency graph for any craftable item.
         </p>
       </div>
-      <CraftingTree />
+      <Suspense fallback={<p className="text-sm text-muted-foreground">Loading tree…</p>}>
+        <CraftingTree />
+      </Suspense>
     </div>
   );
 }

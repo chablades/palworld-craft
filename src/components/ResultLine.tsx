@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ItemIcon } from "@/components/ItemIcon";
 import { MaterialMeta } from "@/components/MaterialMeta";
 import { getStation, getTechInfo, getUsedBy } from "@/lib/recipes";
+import { itemToSlug } from "@/lib/meta";
 import type { OffsetLine } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -55,7 +56,12 @@ export function ResultLine({
         <div className="min-w-0 flex-1">
           <p className={cn(done && "text-muted-foreground line-through")}>
             {step !== undefined ? `${step}. ` : ""}
-            {line.name}
+            <Link
+              href={`/item/${itemToSlug(line.name)}`}
+              className="underline-offset-2 hover:underline"
+            >
+              {line.name}
+            </Link>
           </p>
           {station && (
             <p className="text-xs text-muted-foreground">Station: {station}</p>
@@ -74,7 +80,7 @@ export function ResultLine({
                 <span key={name}>
                   {i > 0 ? ", " : ""}
                   <Link
-                    href={`/?item=${encodeURIComponent(name)}`}
+                    href={`/item/${itemToSlug(name)}`}
                     className="underline-offset-2 hover:text-foreground hover:underline"
                   >
                     {name}

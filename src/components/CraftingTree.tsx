@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Background,
   Controls,
@@ -70,8 +71,12 @@ function layoutTree(root: TreeNode): { nodes: Node[]; edges: Edge[] } {
 }
 
 export function CraftingTree() {
+  const searchParams = useSearchParams();
   const craftables = useMemo(() => getCraftableNames(), []);
-  const [item, setItem] = useState(craftables[0] ?? "Thermal Core");
+  const urlItem = searchParams.get("item") ?? "";
+  const [item, setItem] = useState(
+    craftables.includes(urlItem) ? urlItem : (craftables[0] ?? "Thermal Core"),
+  );
   const [amount, setAmount] = useState(1);
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
