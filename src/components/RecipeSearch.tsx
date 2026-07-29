@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { ItemIcon } from "@/components/ItemIcon";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getRecipeEntry, searchRecipes } from "@/lib/recipes";
+import { getRecipeEntry, getUsedBy, searchRecipes } from "@/lib/recipes";
 import { isRaw } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -44,13 +45,22 @@ export function RecipeSearch({ onSelect, linkToCalculator = true }: RecipeSearch
         {results.map((name) => {
           const entry = getRecipeEntry(name);
           const raw = isRaw(entry);
+          const usedByCount = raw ? getUsedBy(name).length : 0;
           const rowClass =
             "flex w-full items-center justify-between gap-3 rounded-lg border border-border/70 bg-card/60 px-3 py-2.5 text-left transition-colors hover:border-primary/40 hover:bg-accent/40";
 
           const inner = (
             <>
-              <span className="truncate font-medium">{name}</span>
-              <Badge variant={raw ? "raw" : "crafted"}>{raw ? "RAW" : "Crafted"}</Badge>
+              <span className="flex min-w-0 items-center gap-2">
+                <ItemIcon name={name} />
+                <span className="truncate font-medium">{name}</span>
+              </span>
+              <span className="flex shrink-0 items-center gap-2">
+                {raw && usedByCount > 0 && (
+                  <span className="text-[11px] text-muted-foreground">{usedByCount} uses</span>
+                )}
+                <Badge variant={raw ? "raw" : "crafted"}>{raw ? "RAW" : "Crafted"}</Badge>
+              </span>
             </>
           );
 
@@ -67,10 +77,7 @@ export function RecipeSearch({ onSelect, linkToCalculator = true }: RecipeSearch
           if (linkToCalculator && !raw) {
             return (
               <li key={name}>
-                <Link
-                  href={`/?item=${encodeURIComponent(name)}`}
-                  className={rowClass}
-                >
+                <Link href={`/?item=${encodeURIComponent(name)}`} className={rowClass}>
                   {inner}
                 </Link>
               </li>

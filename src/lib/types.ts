@@ -12,6 +12,10 @@ export interface RecipeDefinition {
   ingredients: Record<string, number>;
   /** Crafting station where this recipe is made. */
   station?: string;
+  /** Technology / Ancient Technology level required to unlock. */
+  techLevel?: number;
+  /** Optional note such as "Ancient Technology" vs standard tech tree. */
+  techType?: "standard" | "ancient";
 }
 
 export type RecipeEntry = RecipeDefinition | RawMarker | RawMaterialDefinition;
@@ -111,6 +115,21 @@ export function validateRecipeBook(data: unknown): data is RecipeBookData {
       return false;
     }
     if (recipe.station !== undefined && typeof recipe.station !== "string") {
+      return false;
+    }
+    if (
+      recipe.techLevel !== undefined &&
+      (typeof recipe.techLevel !== "number" ||
+        !Number.isFinite(recipe.techLevel) ||
+        recipe.techLevel < 0)
+    ) {
+      return false;
+    }
+    if (
+      recipe.techType !== undefined &&
+      recipe.techType !== "standard" &&
+      recipe.techType !== "ancient"
+    ) {
       return false;
     }
     for (const [ing, qty] of Object.entries(recipe.ingredients)) {

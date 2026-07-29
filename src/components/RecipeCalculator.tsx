@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Check, Copy, Link2 } from "lucide-react";
+import { Check, Copy, Link2, Star } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { FavoritesBar } from "@/components/FavoritesBar";
 import { InventoryPanel } from "@/components/InventoryPanel";
+import { ItemIcon } from "@/components/ItemIcon";
 import { ResultLine } from "@/components/ResultLine";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,6 +24,7 @@ import {
   applyInventoryOffsets,
   calculateRecipe,
   getCraftableNames,
+  getTechInfo,
 } from "@/lib/recipes";
 import {
   buildShareSearchParams,
@@ -30,8 +33,19 @@ import {
   formatResultsPlain,
   parseInventoryParam,
 } from "@/lib/share";
-import { loadInventory, saveInventory } from "@/lib/storage";
+import {
+  loadChecklist,
+  loadFavorites,
+  loadInventory,
+  loadRecent,
+  pushRecent,
+  saveChecklist,
+  saveInventory,
+  toggleFavorite,
+  type ChecklistMap,
+} from "@/lib/storage";
 import type { InventoryMap } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 export function RecipeCalculator() {
   const searchParams = useSearchParams();
@@ -51,14 +65,22 @@ export function RecipeCalculator() {
   );
   const [submitted, setSubmitted] = useState({ item, amount });
   const [inventory, setInventory] = useState<InventoryMap>({});
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [recent, setRecent] = useState<string[]>([]);
+  const [checklist, setChecklist] = useState<ChecklistMap>({});
   const [hydrated, setHydrated] = useState(false);
   const [copyStatus, setCopyStatus] = useState<"idle" | "plain" | "md" | "link">("idle");
+
+  const planKey = `${submitted.item}:${submitted.amount}`;
+  const tech = getTechInfo(item);
+  const isFavorite = favorites.includes(item);
 
   useEffect(() => {
     const stored = loadInventory();
     setInventory({ ...stored, ...urlInventory });
+    setFavorites(loadFavorites());
+    setRecent(loadRecent());
     setHydrated(true);
-    // URL inventory is only applied on first mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -66,6 +88,16 @@ export function RecipeCalculator() {
     if (!hydrated) return;
     saveInventory(inventory);
   }, [inventory, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    setChecklist(loadChecklist(planKey));
+  }, [planKey, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    saveChecklist(planKey, checklist);
+  }, [checklist, planKey, hydrated]);
 
   const result = useMemo(() => {
     try {
@@ -107,6 +139,15 @@ export function RecipeCalculator() {
       inventory: nextInventory,
     });
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }
+
+  function submitPlan(nextItem: string, nextQty: number) {
+    const next = { item: nextItem, amount: Math.max(1, nextQty) };
+    setItem(next.item);
+    setAmount(next.amount);
+    setSubmitted(next);
+    setRecent(pushRecent(next.item));
+    syncUrl(next.item, next.amount, inventory);
   }
 
   async function handleCopy(format: "plain" | "md") {
@@ -156,13 +197,19 @@ export function RecipeCalculator() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          <FavoritesBar
+            favorites={favorites.filter((name) => craftables.includes(name))}
+            recent={recent.filter((name) => craftables.includes(name))}
+            selected={item}
+            onSelect={(name) => submitPlan(name, amount)}
+            onToggleFavorite={(name) => setFavorites(toggleFavorite(name))}
+          />
+
           <form
-            className="grid gap-4 sm:grid-cols-[1fr_120px_auto] sm:items-end"
+            className="grid gap-4 sm:grid-cols-[1fr_120px_auto_auto] sm:items-end"
             onSubmit={(e) => {
               e.preventDefault();
-              const next = { item, amount: Math.max(1, amount) };
-              setSubmitted(next);
-              syncUrl(next.item, next.amount, inventory);
+              submitPlan(item, amount);
             }}
           >
             <div className="space-y-2">
@@ -174,11 +221,20 @@ export function RecipeCalculator() {
                 <SelectContent>
                   {craftables.map((name) => (
                     <SelectItem key={name} value={name}>
-                      {name}
+                      <span className="inline-flex items-center gap-2">
+                        <ItemIcon name={name} />
+                        {name}
+                      </span>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {tech?.techLevel !== undefined && (
+                <p className="text-xs text-muted-foreground">
+                  Unlock: {tech.techType === "ancient" ? "Ancient Tech" : "Tech"} Lv{" "}
+                  {tech.techLevel}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="amount">Quantity</Label>
@@ -190,6 +246,15 @@ export function RecipeCalculator() {
                 onChange={(e) => setAmount(Number(e.target.value) || 1)}
               />
             </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              aria-label={isFavorite ? "Remove favorite" : "Add favorite"}
+              onClick={() => setFavorites(toggleFavorite(item))}
+            >
+              <Star className={cn("h-4 w-4", isFavorite && "fill-current text-amber-500")} />
+            </Button>
             <Button type="submit">Calculate</Button>
           </form>
 
@@ -220,21 +285,33 @@ export function RecipeCalculator() {
             </Button>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
+          <div className="grid gap-4 md:grid-cols-2 print:grid-cols-1">
+            <Card className="print:break-inside-avoid">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   Raw Materials
                   <Badge variant="raw">{rawLines.length}</Badge>
                 </CardTitle>
                 <CardDescription>
-                  Gather remaining materials after inventory offsets.
+                  Check off materials as you gather them. Sources and drops listed below each item.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
                   {rawLines.map((line) => (
-                    <ResultLine key={line.name} line={line} showMeta />
+                    <ResultLine
+                      key={line.name}
+                      line={line}
+                      showMeta
+                      showUsedBy
+                      checked={Boolean(checklist[`raw:${line.name}`])}
+                      onCheckedChange={(checked) =>
+                        setChecklist((prev) => ({
+                          ...prev,
+                          [`raw:${line.name}`]: checked,
+                        }))
+                      }
+                    />
                   ))}
                   {rawLines.length === 0 && (
                     <li className="text-sm text-muted-foreground">No raw materials.</li>
@@ -243,7 +320,7 @@ export function RecipeCalculator() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="print:break-inside-avoid">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   Crafting Order
@@ -260,7 +337,15 @@ export function RecipeCalculator() {
                       key={line.name}
                       line={line}
                       showStation
+                      showTech
                       step={index + 1}
+                      checked={Boolean(checklist[`craft:${line.name}`])}
+                      onCheckedChange={(checked) =>
+                        setChecklist((prev) => ({
+                          ...prev,
+                          [`craft:${line.name}`]: checked,
+                        }))
+                      }
                     />
                   ))}
                   {craftLines.length === 0 && (

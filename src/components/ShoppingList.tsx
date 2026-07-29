@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Check, Copy, Link2, Plus, Trash2 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { InventoryPanel } from "@/components/InventoryPanel";
+import { ItemIcon } from "@/components/ItemIcon";
 import { ResultLine } from "@/components/ResultLine";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,10 +33,13 @@ import {
   parseListParam,
 } from "@/lib/share";
 import {
+  loadChecklist,
   loadInventory,
   loadShoppingList,
+  saveChecklist,
   saveInventory,
   saveShoppingList,
+  type ChecklistMap,
 } from "@/lib/storage";
 import type { InventoryMap, ShoppingListItem } from "@/lib/types";
 
@@ -57,8 +61,18 @@ export function ShoppingList() {
   const [draftName, setDraftName] = useState(craftables[0] ?? "");
   const [draftAmount, setDraftAmount] = useState(1);
   const [inventory, setInventory] = useState<InventoryMap>({});
+  const [checklist, setChecklist] = useState<ChecklistMap>({});
   const [hydrated, setHydrated] = useState(false);
   const [copyStatus, setCopyStatus] = useState<"idle" | "plain" | "md" | "link">("idle");
+
+  const planKey = useMemo(
+    () =>
+      `list:${items
+        .map((i) => `${i.name}x${i.amount}`)
+        .sort()
+        .join("|")}`,
+    [items],
+  );
 
   useEffect(() => {
     const storedItems = loadShoppingList(DEFAULT_ITEMS);
@@ -82,6 +96,16 @@ export function ShoppingList() {
     if (!hydrated) return;
     saveInventory(inventory);
   }, [inventory, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    setChecklist(loadChecklist(planKey));
+  }, [planKey, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    saveChecklist(planKey, checklist);
+  }, [checklist, planKey, hydrated]);
 
   const result = useMemo(() => calculateBatch(items), [items]);
   const rawLines = useMemo(
@@ -188,7 +212,10 @@ export function ShoppingList() {
                 <SelectContent>
                   {craftables.map((name) => (
                     <SelectItem key={name} value={name}>
-                      {name}
+                      <span className="inline-flex items-center gap-2">
+                        <ItemIcon name={name} />
+                        {name}
+                      </span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -216,7 +243,10 @@ export function ShoppingList() {
                 key={item.name}
                 className="flex flex-wrap items-center justify-between gap-3 rounded-lg border px-3 py-2"
               >
-                <span className="font-medium">{item.name}</span>
+                <span className="inline-flex items-center gap-2 font-medium">
+                  <ItemIcon name={item.name} />
+                  {item.name}
+                </span>
                 <div className="flex items-center gap-2">
                   <Input
                     className="w-24"
@@ -273,8 +303,8 @@ export function ShoppingList() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card>
+      <div className="grid gap-4 md:grid-cols-2 print:grid-cols-1">
+        <Card className="print:break-inside-avoid">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               Combined Raw Materials
@@ -284,7 +314,19 @@ export function ShoppingList() {
           <CardContent>
             <ul className="space-y-2">
               {rawLines.map((line) => (
-                <ResultLine key={line.name} line={line} showMeta />
+                <ResultLine
+                  key={line.name}
+                  line={line}
+                  showMeta
+                  showUsedBy
+                  checked={Boolean(checklist[`raw:${line.name}`])}
+                  onCheckedChange={(checked) =>
+                    setChecklist((prev) => ({
+                      ...prev,
+                      [`raw:${line.name}`]: checked,
+                    }))
+                  }
+                />
               ))}
               {rawLines.length === 0 && (
                 <li className="text-sm text-muted-foreground">No raw materials yet.</li>
@@ -293,7 +335,7 @@ export function ShoppingList() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="print:break-inside-avoid">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               Combined Crafting Order
@@ -307,7 +349,15 @@ export function ShoppingList() {
                   key={line.name}
                   line={line}
                   showStation
+                  showTech
                   step={index + 1}
+                  checked={Boolean(checklist[`craft:${line.name}`])}
+                  onCheckedChange={(checked) =>
+                    setChecklist((prev) => ({
+                      ...prev,
+                      [`craft:${line.name}`]: checked,
+                    }))
+                  }
                 />
               ))}
               {craftLines.length === 0 && (

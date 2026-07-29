@@ -39,6 +39,24 @@ export function getStation(name: string): string | undefined {
   return isRecipe(entry) ? entry.station : undefined;
 }
 
+export function getTechInfo(
+  name: string,
+): { techLevel?: number; techType?: "standard" | "ancient" } | null {
+  const entry = book.recipes[name];
+  if (!isRecipe(entry)) return null;
+  return { techLevel: entry.techLevel, techType: entry.techType };
+}
+
+/** Recipes that directly consume this item as an ingredient. */
+export function getUsedBy(itemName: string): string[] {
+  const users: string[] = [];
+  for (const [name, entry] of Object.entries(book.recipes)) {
+    if (!isRecipe(entry)) continue;
+    if (itemName in entry.ingredients) users.push(name);
+  }
+  return users.sort((a, b) => a.localeCompare(b));
+}
+
 export function searchRecipes(
   query: string,
   filter: "all" | "crafted" | "raw" = "all",
