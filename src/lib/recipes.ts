@@ -39,6 +39,14 @@ export function getStation(name: string): string | undefined {
   return isRecipe(entry) ? entry.station : undefined;
 }
 
+export function getItemCategory(name: string): string {
+  const entry = book.recipes[name];
+  if (entry && typeof entry === "object" && "category" in entry && entry.category?.trim()) {
+    return entry.category.trim();
+  }
+  return "Other";
+}
+
 export function getTechInfo(
   name: string,
 ): { techLevel?: number; techType?: "standard" | "ancient" } | null {
@@ -101,6 +109,47 @@ export function findClosestItem(query: string, names: string[]): string | null {
     }
   }
   return bestScore >= 0 ? best : null;
+}
+
+/** Filtered item names ranked by closeness to the query. Empty query returns all names. */
+export function filterItems(query: string, names: string[]): string[] {
+  const q = query.trim();
+  if (!q) return [...names].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+
+  return names
+    .map((name) => ({ name, score: scoreItemMatch(q, name) }))
+    .filter((entry) => entry.score >= 0)
+    .sort(
+      (a, b) =>
+        b.score - a.score || a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
+    )
+    .map((entry) => entry.name);
+}
+
+export interface ItemCategoryGroup {
+  category: string;
+  items: string[];
+}
+
+/** Group filtered items by category. Categories and items are alphabetical. */
+export function groupItemsByCategory(query: string, names: string[]): ItemCategoryGroup[] {
+  const matched = new Set(filterItems(query, names));
+  const byCategory = new Map<string, string[]>();
+
+  for (const name of names) {
+    if (!matched.has(name)) continue;
+    const category = getItemCategory(name);
+    const list = byCategory.get(category);
+    if (list) list.push(name);
+    else byCategory.set(category, [name]);
+  }
+
+  return [...byCategory.entries()]
+    .sort(([a], [b]) => a.localeCompare(b, undefined, { sensitivity: "base" }))
+    .map(([category, items]) => ({
+      category,
+      items: items.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" })),
+    }));
 }
 
 function addCounts(target: Record<string, number>, key: string, amount: number) {

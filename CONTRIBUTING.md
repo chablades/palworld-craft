@@ -12,6 +12,7 @@ Primary source of truth: [`src/data/recipes.json`](src/data/recipes.json)
 "Carbon Fiber": {
   "station": "Production Assembly Line",
   "techLevel": 18,
+  "category": "Components",
   "ingredients": {
     "Coal": 2,
     "Flame Organ": 1
@@ -24,12 +25,13 @@ Primary source of truth: [`src/data/recipes.json`](src/data/recipes.json)
 ```json
 "Coal": {
   "type": "RAW",
+  "category": "Ores",
   "sources": ["Mining", "Coal Mine"],
   "drops": ["Digtoise"]
 }
 ```
 
-Plain `"RAW"` strings are still accepted for simple entries.
+Use a `category` such as `Ores`, `Pal Materials`, `Ingots`, `Components`, `Weapons`, etc. Categories appear as alphabetical section headers in item pickers.
 
 ## Converter CLI
 

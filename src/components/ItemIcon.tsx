@@ -1,52 +1,39 @@
 import { cn } from "@/lib/utils";
-
-const PALETTE = [
-  "bg-sky-500/20 text-sky-800 dark:text-sky-200",
-  "bg-blue-500/20 text-blue-800 dark:text-blue-200",
-  "bg-cyan-500/20 text-cyan-800 dark:text-cyan-200",
-  "bg-teal-500/20 text-teal-800 dark:text-teal-200",
-  "bg-indigo-500/20 text-indigo-800 dark:text-indigo-200",
-  "bg-amber-500/20 text-amber-900 dark:text-amber-200",
-  "bg-emerald-500/20 text-emerald-800 dark:text-emerald-200",
-  "bg-rose-500/20 text-rose-800 dark:text-rose-200",
-];
-
-function hashName(name: string): number {
-  let h = 0;
-  for (let i = 0; i < name.length; i++) {
-    h = (h * 31 + name.charCodeAt(i)) | 0;
-  }
-  return Math.abs(h);
-}
-
-function initials(name: string): string {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "?";
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
+import { itemToSlug } from "@/lib/meta";
+import { getItemCategory } from "@/lib/recipes";
 
 interface ItemIconProps {
   name: string;
   className?: string;
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "lg";
 }
 
-/** Colored letter avatar until real Palworld sprites are available. */
+const SIZE = {
+  sm: "h-7 w-7",
+  md: "h-9 w-9",
+  lg: "h-14 w-14",
+} as const;
+
+/** Placeholder item art until real Palworld sprites are available (`/public/items/*.svg`). */
 export function ItemIcon({ name, className, size = "sm" }: ItemIconProps) {
-  const color = PALETTE[hashName(name) % PALETTE.length];
+  const src = `/items/${itemToSlug(name)}.svg`;
+  const category = getItemCategory(name);
+
   return (
-    <span
-      aria-hidden
-      title={name}
+    // eslint-disable-next-line @next/next/no-img-element -- local SVG placeholders; keep lightweight
+    <img
+      src={src}
+      alt=""
+      title={`${name} (${category})`}
+      width={size === "lg" ? 56 : size === "md" ? 36 : 28}
+      height={size === "lg" ? 56 : size === "md" ? 36 : 28}
+      loading="lazy"
+      decoding="async"
       className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-md font-semibold tracking-tight",
-        size === "sm" ? "h-7 w-7 text-[10px]" : "h-9 w-9 text-xs",
-        color,
+        "inline-block shrink-0 rounded-md border border-border/50 bg-muted/30 object-cover",
+        SIZE[size],
         className,
       )}
-    >
-      {initials(name)}
-    </span>
+    />
   );
 }
