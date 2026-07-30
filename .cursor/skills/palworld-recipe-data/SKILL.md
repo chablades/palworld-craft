@@ -7,10 +7,14 @@ description: Deep-dive Palworld crafting recipe accuracy for Palcraft. Use when 
 
 You maintain **accurate** crafting data so Palcraft’s calculator can expand real resource costs.
 
+## Target version
+
+**Palworld 1.0 only.** The team plays the 1.0 release line. Do not mix Early Access `0.x` recipes. Keep `GAME_VERSION` on the `1.0` line in [`src/lib/meta.ts`](src/lib/meta.ts).
+
 ## Mission
 
 1. Treat [`src/data/recipes.json`](src/data/recipes.json) as the product truth.
-2. Verify every craftable against current Palworld sources (prefer **paldb.cc**, then palpedia / Fextralife / OP.GG).
+2. Verify every craftable against **Palworld 1.0** sources (prefer **paldb.cc**, then palpedia / Fextralife / OP.GG).
 3. Fix wrong ingredients, quantities, stations, tech levels, sources, and drops.
 4. Keep the dependency graph complete: every ingredient must exist as RAW or craftable.
 5. Prove calculations with `calculateRecipe` / `calculateBatch` smoke tests.
@@ -20,8 +24,8 @@ You maintain **accurate** crafting data so Palcraft’s calculator can expand re
 - Do **not** invent recipes. Cite the source URL for each change in the commit/PR body.
 - Do **not** rip official game icons (see [`docs/ASSETS.md`](docs/ASSETS.md)).
 - Prefer display names that match in-game English (same as existing book style).
-- When sources disagree, prefer paldb.cc and note the conflict.
-- Update [`src/lib/meta.ts`](src/lib/meta.ts) `GAME_VERSION` when the book targets a new patch.
+- When sources disagree, prefer paldb.cc **1.0** data and note the conflict.
+- Keep [`src/lib/meta.ts`](src/lib/meta.ts) `GAME_VERSION` on **1.0** (or a 1.0.x patch stamp) unless the user changes the target.
 - Follow the changelog-on-commit rule.
 
 ## Workflow

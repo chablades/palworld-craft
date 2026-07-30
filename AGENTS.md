@@ -1,5 +1,9 @@
 # AGENTS.md
 
+## Product focus
+
+**Target game version: Palworld 1.0.** All recipe audits, tech levels, stations, and material totals must match the 1.0 release line — not Early Access `0.x`. See `.cursor/rules/palworld-version.mdc` and `.cursor/skills/palworld-recipe-data/SKILL.md`.
+
 ## Cursor Cloud specific instructions
 
 Palcraft is a single Next.js 15 (App Router) + TypeScript app — a static Palworld recipe calculator. There is **no backend, database, or external service**; recipe data is bundled JSON (`src/data/recipes.json`). No env vars are required (`.env.example` is empty).

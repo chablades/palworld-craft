@@ -1,0 +1,14 @@
+---
+description: Palcraft targets Palworld 1.0 recipe data — do not mix EA/pre-1.0 sources.
+alwaysApply: true
+---
+
+# Palworld version focus
+
+Palcraft is built for **Palworld 1.0** (the 1.0 release line the team is playing).
+
+- Treat **1.0** as the source of truth for recipes, stations, tech levels, sources, and drops.
+- Prefer paldb.cc / wiki pages that reflect **1.0**, not Early Access `0.x` data.
+- Keep [`src/lib/meta.ts`](src/lib/meta.ts) `GAME_VERSION` on the **1.0** line (e.g. `1.0` or a 1.0.x patch stamp).
+- Do not “upgrade” the book toward hypothetical future major versions unless the user explicitly changes this target.
+- When auditing recipes, ignore or discard pre-1.0 values that conflict with 1.0 sources.
