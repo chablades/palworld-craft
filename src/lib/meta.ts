@@ -1,8 +1,8 @@
-/** Stamp shown in UI so players know which game data patch recipes target. */
-export const GAME_VERSION = "1.0.2";
+/** Stamp shown in UI — Palcraft targets the Palworld 1.0 release line. */
+export const GAME_VERSION = "1.0";
 export const GAME_VERSION_LABEL = `Palworld ${GAME_VERSION}`;
 export const DATA_NOTE =
-  "Recipe quantities are community-maintained approximations and may differ slightly from the live game.";
+  "Recipe data targets Palworld 1.0. Quantities are community-maintained and may differ slightly from the live game.";
 
 export function itemToSlug(name: string): string {
   return name
