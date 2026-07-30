@@ -2,13 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Copy, Link2, Star } from "lucide-react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FavoritesBar } from "@/components/FavoritesBar";
 import { EfficiencyTips } from "@/components/EfficiencyTips";
-import { InventoryPanel } from "@/components/InventoryPanel";
 import { ItemTypeahead, type ItemTypeaheadHandle } from "@/components/ItemTypeahead";
 import { PrintButton } from "@/components/PrintButton";
-import { ProgressSummary } from "@/components/ProgressSummary";
 import { ResultLine } from "@/components/ResultLine";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,20 +27,16 @@ import {
   formatResultsJson,
   formatResultsMarkdown,
   formatResultsPlain,
-  parseInventoryParam,
 } from "@/lib/share";
 import {
   loadChecklist,
   loadFavorites,
-  loadInventory,
   loadRecent,
   pushRecent,
   saveChecklist,
-  saveInventory,
   toggleFavorite,
   type ChecklistMap,
 } from "@/lib/storage";
-import type { InventoryMap } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export function RecipeCalculator() {
@@ -50,18 +45,15 @@ export function RecipeCalculator() {
   const pathname = usePathname();
   const craftables = useMemo(() => getCraftableNames(), []);
 
-  const initialItem = searchParams.get("item") ?? craftables[0] ?? "Thermal Core";
-  const initialQty = Number(searchParams.get("qty") ?? "20");
-  const urlInventory = parseInventoryParam(searchParams.get("inv"));
+  const initialItem = searchParams.get("item") ?? "AI Core";
+  const initialQty = Number(searchParams.get("qty") ?? "1");
 
   const [item, setItem] = useState(
     craftables.includes(initialItem) ? initialItem : craftables[0] ?? "",
   );
   const [amount, setAmount] = useState(
-    Number.isFinite(initialQty) && initialQty > 0 ? Math.floor(initialQty) : 20,
+    Number.isFinite(initialQty) && initialQty > 0 ? Math.floor(initialQty) : 1,
   );
-  const [submitted, setSubmitted] = useState({ item, amount });
-  const [inventory, setInventory] = useState<InventoryMap>({});
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recent, setRecent] = useState<string[]>([]);
   const [checklist, setChecklist] = useState<ChecklistMap>({});
@@ -69,23 +61,16 @@ export function RecipeCalculator() {
   const [copyStatus, setCopyStatus] = useState<"idle" | "plain" | "md" | "json" | "link">("idle");
   const itemTypeaheadRef = useRef<ItemTypeaheadHandle>(null);
 
-  const planKey = `${submitted.item}:${submitted.amount}`;
+  const qty = Math.max(1, Number.isFinite(amount) ? Math.floor(amount) : 1);
+  const planKey = `${item}:${qty}`;
   const tech = getTechInfo(item);
   const isFavorite = favorites.includes(item);
 
   useEffect(() => {
-    const stored = loadInventory();
-    setInventory({ ...stored, ...urlInventory });
     setFavorites(loadFavorites());
     setRecent(loadRecent());
     setHydrated(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (!hydrated) return;
-    saveInventory(inventory);
-  }, [inventory, hydrated]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -98,60 +83,44 @@ export function RecipeCalculator() {
   }, [checklist, planKey, hydrated]);
 
   const result = useMemo(() => {
+    if (!item || !craftables.includes(item)) return null;
     try {
-      return calculateRecipe(submitted.item, submitted.amount);
+      return calculateRecipe(item, qty);
     } catch {
       return null;
     }
-  }, [submitted]);
+  }, [item, qty, craftables]);
 
+  // No storage offsets on the calculator — show full required amounts only.
   const rawLines = useMemo(
-    () => (result ? applyInventoryOffsets(result.raws, inventory) : []),
-    [result, inventory],
+    () => (result ? applyInventoryOffsets(result.raws, {}) : []),
+    [result],
   );
   const craftLines = useMemo(
-    () => (result ? applyCraftOffsets(result.crafts, inventory) : []),
-    [result, inventory],
+    () => (result ? applyCraftOffsets(result.crafts, {}) : []),
+    [result],
   );
 
-  const inventoryNames = useMemo(() => {
-    const names = new Set<string>();
-    for (const line of rawLines) names.add(line.name);
-    for (const line of craftLines) names.add(line.name);
-    return [...names].sort((a, b) => a.localeCompare(b));
-  }, [rawLines, craftLines]);
-
-  function setOwned(name: string, owned: number) {
-    setInventory((prev) => {
-      const next = { ...prev };
-      if (owned <= 0) delete next[name];
-      else next[name] = owned;
-      return next;
-    });
-  }
-
-  function syncUrl(nextItem: string, nextQty: number, nextInventory: InventoryMap) {
+  function syncUrl(nextItem: string, nextQty: number) {
     const params = buildShareSearchParams({
       item: nextItem,
       qty: nextQty,
-      inventory: nextInventory,
     });
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
   function submitPlan(nextItem: string, nextQty: number) {
-    const next = { item: nextItem, amount: Math.max(1, nextQty) };
-    setItem(next.item);
-    setAmount(next.amount);
-    setSubmitted(next);
-    setRecent(pushRecent(next.item));
-    syncUrl(next.item, next.amount, inventory);
+    const nextAmount = Math.max(1, nextQty);
+    setItem(nextItem);
+    setAmount(nextAmount);
+    setRecent(pushRecent(nextItem));
+    syncUrl(nextItem, nextAmount);
   }
 
   async function handleCopy(format: "plain" | "md" | "json") {
     if (!result) return;
     const sections = {
-      title: `${submitted.amount}× ${submitted.item}`,
+      title: `${qty}× ${item}`,
       raws: rawLines,
       crafts: craftLines,
     };
@@ -169,12 +138,8 @@ export function RecipeCalculator() {
   }
 
   async function handleCopyLink() {
-    syncUrl(submitted.item, submitted.amount, inventory);
-    const params = buildShareSearchParams({
-      item: submitted.item,
-      qty: submitted.amount,
-      inventory,
-    });
+    syncUrl(item, qty);
+    const params = buildShareSearchParams({ item, qty });
     const url = `${window.location.origin}${pathname}?${params.toString()}`;
     const ok = await copyText(url);
     if (ok) {
@@ -189,8 +154,8 @@ export function RecipeCalculator() {
         <CardHeader>
           <CardTitle>Recipe Calculator</CardTitle>
           <CardDescription>
-            Pick a craftable item and quantity. We expand the full dependency tree into raw
-            materials and intermediate crafts.
+            Choose an item and quantity to see every ingredient you need — raw materials and
+            intermediate crafts. Totals update live.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -236,7 +201,10 @@ export function RecipeCalculator() {
                 type="number"
                 min={1}
                 value={amount}
-                onChange={(e) => setAmount(Number(e.target.value) || 1)}
+                onChange={(e) => {
+                  const next = Number(e.target.value);
+                  setAmount(Number.isFinite(next) && next > 0 ? Math.floor(next) : 1);
+                }}
               />
             </div>
             <Button
@@ -248,15 +216,21 @@ export function RecipeCalculator() {
             >
               <Star className={cn("h-4 w-4", isFavorite && "fill-current text-amber-500")} />
             </Button>
-            <Button type="submit">Calculate</Button>
+            <Button type="submit">Update link</Button>
           </form>
 
           {result && (
-            <InventoryPanel
-              itemNames={inventoryNames}
-              inventory={inventory}
-              onChange={setOwned}
-            />
+            <p className="text-sm text-muted-foreground">
+              Ingredients needed for{" "}
+              <span className="font-medium text-foreground">
+                {qty}× {item}
+              </span>
+              . Track owned materials on the{" "}
+              <Link href="/storage" className="underline-offset-2 hover:underline">
+                Storage
+              </Link>{" "}
+              tab.
+            </p>
           )}
         </CardContent>
       </Card>
@@ -281,9 +255,12 @@ export function RecipeCalculator() {
               Copy share link
             </Button>
             <PrintButton />
+            <Button type="button" variant="secondary" size="sm" asChild>
+              <Link href={`/tree?item=${encodeURIComponent(item)}&qty=${qty}`}>
+                Open crafting tree
+              </Link>
+            </Button>
           </div>
-
-          <ProgressSummary rawLines={rawLines} craftLines={craftLines} checklist={checklist} />
 
           <EfficiencyTips crafts={result.crafts} />
 
@@ -295,7 +272,7 @@ export function RecipeCalculator() {
                   <Badge variant="raw">{rawLines.length}</Badge>
                 </CardTitle>
                 <CardDescription>
-                  Check off materials as you gather them. Sources and drops listed below each item.
+                  Gather these for {qty}× {item}.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -329,7 +306,7 @@ export function RecipeCalculator() {
                   <Badge variant="crafted">{craftLines.length}</Badge>
                 </CardTitle>
                 <CardDescription>
-                  Bottom-up craft order — make intermediates before dependents.
+                  Bottom-up order — craft intermediates before dependents.
                 </CardDescription>
               </CardHeader>
               <CardContent>

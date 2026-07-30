@@ -92,11 +92,12 @@ export function ResultLine({
           )}
         </div>
         <div className="shrink-0 text-right font-mono text-sm tabular-nums">
-          <p className="font-semibold">{line.remaining}</p>
-          {(line.owned > 0 || line.remaining !== line.required) && (
+          <p className="font-semibold" aria-label={`Need ${line.required}`}>
+            {line.required}
+          </p>
+          {line.owned > 0 && (
             <p className="text-xs text-muted-foreground">
-              of {line.required}
-              {line.owned > 0 ? ` (−${line.owned})` : ""}
+              {line.remaining} left (−{line.owned} owned)
             </p>
           )}
         </div>
