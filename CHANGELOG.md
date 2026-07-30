@@ -4,6 +4,7 @@ All notable updates to Palcraft are listed here. Newest entries first.
 
 ## 2026-07-30
 
+- Compact calculator materials: indented craft tree, (?) info tip, remove Calculate button
 - Rebuild calculator as a nested material hierarchy (ingredients with sub-materials underneath)
 - Remove Efficiency Tips and separate Raw Materials panel from the calculator
 - Calculator shows need/have per material (red if Storage is short, green if enough)

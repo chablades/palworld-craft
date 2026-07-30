@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FavoritesBar } from "@/components/FavoritesBar";
 import { ItemTypeahead, type ItemTypeaheadHandle } from "@/components/ItemTypeahead";
+import { MaterialInfoTip } from "@/components/MaterialInfoTip";
 import { MaterialTreeCard } from "@/components/MaterialTreeCard";
 import { PrintButton } from "@/components/PrintButton";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +20,6 @@ import {
   buildCraftingTree,
   calculateRecipe,
   getCraftableNames,
-  getTechInfo,
 } from "@/lib/recipes";
 import {
   buildShareSearchParams,
@@ -61,7 +61,6 @@ export function RecipeCalculator() {
   const itemTypeaheadRef = useRef<ItemTypeaheadHandle>(null);
 
   const qty = Math.max(1, Number.isFinite(amount) ? Math.floor(amount) : 1);
-  const tech = getTechInfo(item);
   const isFavorite = favorites.includes(item);
 
   const refreshStorage = useCallback(() => {
@@ -88,6 +87,17 @@ export function RecipeCalculator() {
       window.removeEventListener("storage", onStorage);
     };
   }, [hydrated, refreshStorage]);
+
+  // Keep the share URL in sync without a Calculate button.
+  useEffect(() => {
+    if (!hydrated || !item || !craftables.includes(item)) return;
+    const params = buildShareSearchParams({ item, qty });
+    const next = `${pathname}?${params.toString()}`;
+    const current = `${pathname}${window.location.search}`;
+    if (next !== current) {
+      router.replace(next, { scroll: false });
+    }
+  }, [hydrated, item, qty, craftables, pathname, router]);
 
   const tree = useMemo((): TreeNode | null => {
     if (!item || !craftables.includes(item)) return null;
@@ -118,21 +128,10 @@ export function RecipeCalculator() {
     [result, inventory],
   );
 
-  function syncUrl(nextItem: string, nextQty: number) {
-    const params = buildShareSearchParams({
-      item: nextItem,
-      qty: nextQty,
-    });
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-  }
-
-  function submitPlan(nextItem: string, nextQty: number) {
-    const nextAmount = Math.max(1, nextQty);
+  function selectItem(nextItem: string) {
     setItem(nextItem);
-    setAmount(nextAmount);
     setRecent(pushRecent(nextItem));
     refreshStorage();
-    syncUrl(nextItem, nextAmount);
   }
 
   async function handleCopy(format: "plain" | "md" | "json") {
@@ -156,7 +155,6 @@ export function RecipeCalculator() {
   }
 
   async function handleCopyLink() {
-    syncUrl(item, qty);
     const params = buildShareSearchParams({ item, qty });
     const url = `${window.location.origin}${pathname}?${params.toString()}`;
     const ok = await copyText(url);
@@ -172,9 +170,9 @@ export function RecipeCalculator() {
         <CardHeader>
           <CardTitle>Recipe Calculator</CardTitle>
           <CardDescription>
-            Search for an item and quantity. Materials appear below — if a material needs other
-            materials, those nest underneath. Each line is{" "}
-            <span className="font-medium text-foreground">need / have</span> from{" "}
+            Search an item and quantity — materials update live. Nested crafts indent under their
+            parent. Use (?) for station, unlock, and source details.{" "}
+            <span className="font-medium text-foreground">need / have</span> comes from{" "}
             <Link href="/storage" className="underline-offset-2 hover:underline">
               Storage
             </Link>
@@ -186,21 +184,16 @@ export function RecipeCalculator() {
             favorites={favorites.filter((name) => craftables.includes(name))}
             recent={recent.filter((name) => craftables.includes(name))}
             selected={item}
-            onSelect={(name) => submitPlan(name, amount)}
+            onSelect={selectItem}
             onToggleFavorite={(name) => setFavorites(toggleFavorite(name))}
           />
 
-          <form
-            className="grid gap-4 sm:grid-cols-[1fr_120px_auto_auto] sm:items-end"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const resolved = itemTypeaheadRef.current?.resolve() ?? item;
-              if (!resolved) return;
-              submitPlan(resolved, amount);
-            }}
-          >
+          <div className="grid gap-4 sm:grid-cols-[1fr_120px_auto] sm:items-end">
             <div className="space-y-2">
-              <Label htmlFor="item">Search item</Label>
+              <Label htmlFor="item" className="inline-flex items-center gap-1.5">
+                Search item
+                {item && <MaterialInfoTip name={item} isRaw={false} />}
+              </Label>
               <ItemTypeahead
                 ref={itemTypeaheadRef}
                 id="item"
@@ -210,15 +203,9 @@ export function RecipeCalculator() {
                   setItem(name);
                   refreshStorage();
                 }}
-                onEnterCommit={(name) => submitPlan(name, amount)}
+                onEnterCommit={(name) => selectItem(name)}
                 placeholder="Search for an item…"
               />
-              {tech?.techLevel !== undefined && (
-                <p className="text-xs text-muted-foreground">
-                  Unlock: {tech.techType === "ancient" ? "Ancient Tech" : "Tech"} Lv{" "}
-                  {tech.techLevel}
-                </p>
-              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="amount">Quantity</Label>
@@ -242,8 +229,7 @@ export function RecipeCalculator() {
             >
               <Star className={cn("h-4 w-4", isFavorite && "fill-current text-amber-500")} />
             </Button>
-            <Button type="submit">Calculate</Button>
-          </form>
+          </div>
         </CardContent>
       </Card>
 
@@ -255,8 +241,7 @@ export function RecipeCalculator() {
               <Badge variant="crafted">{materials.length}</Badge>
             </CardTitle>
             <CardDescription>
-              Top cards are direct ingredients. Nested rows are materials required to craft that
-              ingredient.
+              Direct ingredients in each square. Deeper crafts indent under their parent.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -301,7 +286,7 @@ export function RecipeCalculator() {
             </div>
 
             {materials.length > 0 ? (
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-3 md:grid-cols-2">
                 {materials.map((node) => (
                   <MaterialTreeCard key={node.id} node={node} inventory={inventory} />
                 ))}
