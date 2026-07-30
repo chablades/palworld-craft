@@ -4,6 +4,7 @@ All notable updates to Palcraft are listed here. Newest entries first.
 
 ## 2026-07-30
 
+- Add a fixed bottom-right GitHub link to the public Palcraft repo
 - Calculator shows need/have per material (red if Storage is short, green if enough)
 - Restructure app around Calculator, Storage, and Crafting Tree; pause Compare and Shopping List
 - Move owned materials to a dedicated Storage tab; calculator always shows full ingredient needs

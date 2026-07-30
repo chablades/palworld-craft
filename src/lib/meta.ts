@@ -4,6 +4,9 @@ export const GAME_VERSION_LABEL = `Palworld ${GAME_VERSION}`;
 export const DATA_NOTE =
   "Recipe data targets Palworld 1.0. Quantities are community-maintained and may differ slightly from the live game.";
 
+/** Public repo for Palcraft (source, issues, contributions). */
+export const GITHUB_REPO_URL = "https://github.com/chablades/palworld-craft";
+
 export function itemToSlug(name: string): string {
   return name
     .trim()

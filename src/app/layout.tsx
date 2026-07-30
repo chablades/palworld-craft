@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Source_Sans_3 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { GitHubCornerLink } from "@/components/GitHubCornerLink";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </main>
           <SiteFooter />
+          <GitHubCornerLink />
           <ServiceWorkerRegister />
           <Analytics />
         </ThemeProvider>

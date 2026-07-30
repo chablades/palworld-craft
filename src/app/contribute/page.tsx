@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GAME_VERSION_LABEL } from "@/lib/meta";
+import { GAME_VERSION_LABEL, GITHUB_REPO_URL } from "@/lib/meta";
 
 export default function ContributePage() {
   return (
@@ -43,7 +43,7 @@ export default function ContributePage() {
             <li>
               Open a PR against{" "}
               <Link
-                href="https://github.com/chablades/palworld-craft"
+                href={GITHUB_REPO_URL}
                 className="text-primary underline-offset-2 hover:underline"
               >
                 github.com/chablades/palworld-craft
@@ -52,7 +52,10 @@ export default function ContributePage() {
           </ol>
           <p>
             See also{" "}
-            <Link href="https://github.com/chablades/palworld-craft/blob/main/CONTRIBUTING.md" className="text-primary underline-offset-2 hover:underline">
+            <Link
+              href={`${GITHUB_REPO_URL}/blob/main/CONTRIBUTING.md`}
+              className="text-primary underline-offset-2 hover:underline"
+            >
               CONTRIBUTING.md
             </Link>{" "}
             in the repo.
