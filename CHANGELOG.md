@@ -3,7 +3,7 @@
 All notable updates to Palcraft are listed here. Newest entries first.
 
 ## 2026-07-29
-
+- Rename inventory panel to Storage and add Copy JSON export
 - Add category-grouped search dropdown and per-item placeholder images
 - Replace item dropdowns with typeahead closest-match search
 - Add project changelog and Cursor rule to record update + date on every git commit

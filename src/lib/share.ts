@@ -128,6 +128,34 @@ export function formatResultsMarkdown(sections: ExportSections): string {
   return lines.join("\n");
 }
 
+function linesToExportRecords(lines: OffsetLine[]) {
+  return lines.map((line) => ({
+    name: line.name,
+    required: line.required,
+    storage: line.owned,
+    remaining: line.remaining,
+  }));
+}
+
+/** JSON export of a plan, including storage offsets. */
+export function formatResultsJson(sections: ExportSections): string {
+  const storage: InventoryMap = {};
+  for (const line of [...sections.raws, ...sections.crafts]) {
+    if (line.owned > 0) storage[line.name] = line.owned;
+  }
+
+  return `${JSON.stringify(
+    {
+      title: sections.title,
+      storage,
+      raws: linesToExportRecords(sections.raws),
+      crafts: linesToExportRecords(sections.crafts),
+    },
+    null,
+    2,
+  )}\n`;
+}
+
 export async function copyText(text: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
