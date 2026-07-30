@@ -288,7 +288,7 @@ export function RecipeCalculator() {
             </div>
 
             {materials.length > 0 ? (
-              <div className="grid gap-3 md:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {materials.map((node) => (
                   <MaterialTreeCard key={node.id} node={node} inventory={inventory} />
                 ))}

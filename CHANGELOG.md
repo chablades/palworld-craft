@@ -4,6 +4,7 @@ All notable updates to Palcraft are listed here. Newest entries first.
 
 ## 2026-07-30
 
+- Tighten material need/have spacing and use a 3-column calculator grid on desktop
 - Expand calculator craft recipes with a clickable show/hide bar under each material
 - Compact calculator materials: indented craft tree, (?) info tip, remove Calculate button
 - Rebuild calculator as a nested material hierarchy (ingredients with sub-materials underneath)

@@ -34,7 +34,7 @@ function MaterialRow({
     <div className={cn(depth > 0 && "ml-3 border-l border-border/50 pl-2")}>
       <div
         className={cn(
-          "flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors",
+          "flex items-center gap-1.5 rounded-md px-2 py-1.5 transition-colors",
           depth === 0 && "bg-muted/30",
           short && depth === 0 && "bg-red-500/5",
           enough && "bg-emerald-500/5",
@@ -44,7 +44,7 @@ function MaterialRow({
         <Link
           href={`/item/${itemToSlug(node.name)}`}
           className={cn(
-            "min-w-0 flex-1 truncate underline-offset-2 hover:underline",
+            "min-w-0 truncate underline-offset-2 hover:underline",
             depth === 0 ? "font-semibold" : "text-sm font-medium",
           )}
         >
@@ -53,7 +53,7 @@ function MaterialRow({
         <MaterialInfoTip name={node.name} isRaw={node.isRaw} />
         <div
           className={cn(
-            "shrink-0 text-right font-mono text-sm tabular-nums font-semibold",
+            "ml-1 shrink-0 font-mono text-sm tabular-nums font-semibold",
             enough ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400",
           )}
           aria-label={`Need ${need}, have ${have}`}
