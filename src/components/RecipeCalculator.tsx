@@ -50,17 +50,16 @@ export function RecipeCalculator() {
   const pathname = usePathname();
   const craftables = useMemo(() => getCraftableNames(), []);
 
-  const initialItem = searchParams.get("item") ?? craftables[0] ?? "Thermal Core";
-  const initialQty = Number(searchParams.get("qty") ?? "20");
+  const initialItem = searchParams.get("item") ?? "AI Core";
+  const initialQty = Number(searchParams.get("qty") ?? "1");
   const urlInventory = parseInventoryParam(searchParams.get("inv"));
 
   const [item, setItem] = useState(
     craftables.includes(initialItem) ? initialItem : craftables[0] ?? "",
   );
   const [amount, setAmount] = useState(
-    Number.isFinite(initialQty) && initialQty > 0 ? Math.floor(initialQty) : 20,
+    Number.isFinite(initialQty) && initialQty > 0 ? Math.floor(initialQty) : 1,
   );
-  const [submitted, setSubmitted] = useState({ item, amount });
   const [inventory, setInventory] = useState<InventoryMap>({});
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recent, setRecent] = useState<string[]>([]);
@@ -69,7 +68,8 @@ export function RecipeCalculator() {
   const [copyStatus, setCopyStatus] = useState<"idle" | "plain" | "md" | "json" | "link">("idle");
   const itemTypeaheadRef = useRef<ItemTypeaheadHandle>(null);
 
-  const planKey = `${submitted.item}:${submitted.amount}`;
+  const qty = Math.max(1, Number.isFinite(amount) ? Math.floor(amount) : 1);
+  const planKey = `${item}:${qty}`;
   const tech = getTechInfo(item);
   const isFavorite = favorites.includes(item);
 
@@ -97,13 +97,15 @@ export function RecipeCalculator() {
     saveChecklist(planKey, checklist);
   }, [checklist, planKey, hydrated]);
 
+  // Live expansion: changing item or quantity immediately updates totals.
   const result = useMemo(() => {
+    if (!item || !craftables.includes(item)) return null;
     try {
-      return calculateRecipe(submitted.item, submitted.amount);
+      return calculateRecipe(item, qty);
     } catch {
       return null;
     }
-  }, [submitted]);
+  }, [item, qty, craftables]);
 
   const rawLines = useMemo(
     () => (result ? applyInventoryOffsets(result.raws, inventory) : []),
@@ -140,18 +142,17 @@ export function RecipeCalculator() {
   }
 
   function submitPlan(nextItem: string, nextQty: number) {
-    const next = { item: nextItem, amount: Math.max(1, nextQty) };
-    setItem(next.item);
-    setAmount(next.amount);
-    setSubmitted(next);
-    setRecent(pushRecent(next.item));
-    syncUrl(next.item, next.amount, inventory);
+    const nextAmount = Math.max(1, nextQty);
+    setItem(nextItem);
+    setAmount(nextAmount);
+    setRecent(pushRecent(nextItem));
+    syncUrl(nextItem, nextAmount, inventory);
   }
 
   async function handleCopy(format: "plain" | "md" | "json") {
     if (!result) return;
     const sections = {
-      title: `${submitted.amount}× ${submitted.item}`,
+      title: `${qty}× ${item}`,
       raws: rawLines,
       crafts: craftLines,
     };
@@ -169,10 +170,10 @@ export function RecipeCalculator() {
   }
 
   async function handleCopyLink() {
-    syncUrl(submitted.item, submitted.amount, inventory);
+    syncUrl(item, qty, inventory);
     const params = buildShareSearchParams({
-      item: submitted.item,
-      qty: submitted.amount,
+      item,
+      qty,
       inventory,
     });
     const url = `${window.location.origin}${pathname}?${params.toString()}`;
@@ -189,8 +190,8 @@ export function RecipeCalculator() {
         <CardHeader>
           <CardTitle>Recipe Calculator</CardTitle>
           <CardDescription>
-            Pick a craftable item and quantity. We expand the full dependency tree into raw
-            materials and intermediate crafts.
+            Pick a craftable item and quantity. Totals update live with the full dependency tree —
+            raw materials and intermediate crafts needed for that amount.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -236,7 +237,10 @@ export function RecipeCalculator() {
                 type="number"
                 min={1}
                 value={amount}
-                onChange={(e) => setAmount(Number(e.target.value) || 1)}
+                onChange={(e) => {
+                  const next = Number(e.target.value);
+                  setAmount(Number.isFinite(next) && next > 0 ? Math.floor(next) : 1);
+                }}
               />
             </div>
             <Button
@@ -248,15 +252,36 @@ export function RecipeCalculator() {
             >
               <Star className={cn("h-4 w-4", isFavorite && "fill-current text-amber-500")} />
             </Button>
-            <Button type="submit">Calculate</Button>
+            <Button type="submit">Update link</Button>
           </form>
 
           {result && (
-            <InventoryPanel
-              itemNames={inventoryNames}
-              inventory={inventory}
-              onChange={setOwned}
-            />
+            <>
+              <p className="text-sm text-muted-foreground">
+                Showing materials for{" "}
+                <span className="font-medium text-foreground">
+                  {qty}× {item}
+                </span>
+                .
+              </p>
+              <InventoryPanel
+                itemNames={inventoryNames}
+                inventory={inventory}
+                onChange={setOwned}
+                description="Optional: amounts in storage are subtracted from what you still need. Required totals above stay visible."
+              />
+              {Object.keys(inventory).length > 0 && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="print:hidden"
+                  onClick={() => setInventory({})}
+                >
+                  Clear storage offsets
+                </Button>
+              )}
+            </>
           )}
         </CardContent>
       </Card>
@@ -295,7 +320,7 @@ export function RecipeCalculator() {
                   <Badge variant="raw">{rawLines.length}</Badge>
                 </CardTitle>
                 <CardDescription>
-                  Check off materials as you gather them. Sources and drops listed below each item.
+                  Amounts needed for {qty}× {item}. Check off materials as you gather them.
                 </CardDescription>
               </CardHeader>
               <CardContent>

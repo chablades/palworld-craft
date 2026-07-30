@@ -4,6 +4,7 @@ All notable updates to Palcraft are listed here. Newest entries first.
 
 ## 2026-07-30
 
+- Fix calculator totals display: always show required amounts, live-update for qty (e.g. 1× AI Core)
 - Lock product focus on Palworld 1.0 (version rule, agent docs, GAME_VERSION stamp)
 - Resolve leftover merge conflict markers in the changelog
 - Sync recipe data to Palworld 1.0: fix tech levels for 9 components (Carbon Fiber, Circuit Board, Computer, Bio Battery, Corrosive Solvent, Polymer, Plasteel, Thermal Core, AI Core)
