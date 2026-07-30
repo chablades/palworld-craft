@@ -4,17 +4,11 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ItemIcon } from "@/components/ItemIcon";
+import { ItemTypeahead } from "@/components/ItemTypeahead";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { compareItems } from "@/lib/compare";
 import { itemToSlug } from "@/lib/meta";
 import { getCraftableNames } from "@/lib/recipes";
@@ -186,21 +180,12 @@ function ComparePicker({
       </p>
       <div className="space-y-2">
         <Label>Item</Label>
-        <Select value={item} onValueChange={onItem}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {craftables.map((name) => (
-              <SelectItem key={name} value={name}>
-                <span className="inline-flex items-center gap-2">
-                  <ItemIcon name={name} />
-                  {name}
-                </span>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <ItemTypeahead
+          value={item}
+          options={craftables}
+          onValueChange={onItem}
+          placeholder="Type a craftable item…"
+        />
       </div>
       <div className="space-y-2">
         <Label>Quantity</Label>

@@ -6,19 +6,13 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { EfficiencyTips } from "@/components/EfficiencyTips";
 import { InventoryPanel } from "@/components/InventoryPanel";
 import { ItemIcon } from "@/components/ItemIcon";
+import { ItemTypeahead } from "@/components/ItemTypeahead";
 import { ResultLine } from "@/components/ResultLine";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   applyCraftOffsets,
   applyInventoryOffsets,
@@ -205,22 +199,14 @@ export function ShoppingList() {
         <CardContent className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-[1fr_120px_auto] sm:items-end">
             <div className="space-y-2">
-              <Label>Add item</Label>
-              <Select value={draftName} onValueChange={setDraftName}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select item" />
-                </SelectTrigger>
-                <SelectContent>
-                  {craftables.map((name) => (
-                    <SelectItem key={name} value={name}>
-                      <span className="inline-flex items-center gap-2">
-                        <ItemIcon name={name} />
-                        {name}
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label htmlFor="shop-item">Add item</Label>
+              <ItemTypeahead
+                id="shop-item"
+                value={draftName}
+                options={craftables}
+                onValueChange={setDraftName}
+                placeholder="Type a craftable item…"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="shop-amount">Qty</Label>

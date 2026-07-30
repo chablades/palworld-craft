@@ -6,20 +6,13 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FavoritesBar } from "@/components/FavoritesBar";
 import { EfficiencyTips } from "@/components/EfficiencyTips";
 import { InventoryPanel } from "@/components/InventoryPanel";
-import { ItemIcon } from "@/components/ItemIcon";
+import { ItemTypeahead } from "@/components/ItemTypeahead";
 import { ResultLine } from "@/components/ResultLine";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   applyCraftOffsets,
   applyInventoryOffsets,
@@ -215,21 +208,13 @@ export function RecipeCalculator() {
           >
             <div className="space-y-2">
               <Label htmlFor="item">Item</Label>
-              <Select value={item} onValueChange={setItem}>
-                <SelectTrigger id="item">
-                  <SelectValue placeholder="Select item" />
-                </SelectTrigger>
-                <SelectContent>
-                  {craftables.map((name) => (
-                    <SelectItem key={name} value={name}>
-                      <span className="inline-flex items-center gap-2">
-                        <ItemIcon name={name} />
-                        {name}
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <ItemTypeahead
+                id="item"
+                value={item}
+                options={craftables}
+                onValueChange={setItem}
+                placeholder="Type a craftable item…"
+              />
               {tech?.techLevel !== undefined && (
                 <p className="text-xs text-muted-foreground">
                   Unlock: {tech.techType === "ancient" ? "Ancient Tech" : "Tech"} Lv{" "}

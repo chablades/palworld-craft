@@ -1,0 +1,24 @@
+---
+description: Update CHANGELOG.md with dated entry whenever creating a git commit
+alwaysApply: true
+---
+
+# Changelog on every commit
+
+Whenever you create a git commit in this repo:
+
+1. Before staging the final commit, update `CHANGELOG.md`.
+2. Add or extend today's dated section at the **top** (newest first), using `## YYYY-MM-DD` with the real commit date.
+3. Under that heading, add a short bullet that summarizes the update (same intent as the commit message — why/what changed).
+4. If today's section already exists, append a new bullet under it; do not create a duplicate date heading.
+5. Stage `CHANGELOG.md` with the rest of the commit so the changelog ships with the change.
+
+Example:
+
+```markdown
+## 2026-07-29
+
+- Fix shopping-list inventory offset when quantity is zero
+```
+
+Do not skip this step for agent commits. Keep bullets concise (one line).

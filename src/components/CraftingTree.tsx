@@ -15,13 +15,7 @@ import "@xyflow/react/dist/style.css";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { ItemTypeahead } from "@/components/ItemTypeahead";
 import { buildCraftingTree, getCraftableNames } from "@/lib/recipes";
 import type { TreeNode } from "@/lib/types";
 
@@ -109,19 +103,14 @@ export function CraftingTree() {
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label>Item</Label>
-            <Select value={item} onValueChange={setItem}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {craftables.map((name) => (
-                  <SelectItem key={name} value={name}>
-                    {name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="tree-item">Item</Label>
+            <ItemTypeahead
+              id="tree-item"
+              value={item}
+              options={craftables}
+              onValueChange={setItem}
+              placeholder="Type a craftable item…"
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="tree-amount">Quantity</Label>
