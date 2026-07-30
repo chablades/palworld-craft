@@ -4,6 +4,7 @@ All notable updates to Palcraft are listed here. Newest entries first.
 
 ## 2026-07-30
 
+- Resolve leftover merge conflict markers in the changelog
 - Sync recipe data to Palworld v1.0.2: fix tech levels for 9 components (Carbon Fiber, Circuit Board, Computer, Bio Battery, Corrosive Solvent, Polymer, Plasteel, Thermal Core, AI Core)
 - Fix station errors: Bio Battery → Production Assembly Line II, Plasteel → Electric Furnace, AI Core → Advanced Workshop
 - Fix Plasteel ingredients (Crude Oil 2 + Ore 5, removing Paldium Fragment) and Pal Metal Ingot ingredients (Ore 4 + Pure Quartz 1 + Paldium Fragment 2)
