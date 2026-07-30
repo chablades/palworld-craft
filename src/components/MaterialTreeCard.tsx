@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { CornerDownRight } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { ItemIcon } from "@/components/ItemIcon";
 import { MaterialInfoTip } from "@/components/MaterialInfoTip";
 import { itemToSlug } from "@/lib/meta";
@@ -13,23 +14,6 @@ interface MaterialTreeCardProps {
   inventory: InventoryMap;
 }
 
-function DepthArrows({ depth }: { depth: number }) {
-  if (depth <= 0) return null;
-  return (
-    <span
-      className="flex shrink-0 items-center gap-0.5 text-muted-foreground"
-      aria-hidden="true"
-    >
-      {Array.from({ length: depth }, (_, index) => (
-        <CornerDownRight
-          key={index}
-          className={cn("h-3.5 w-3.5", index < depth - 1 && "opacity-35")}
-        />
-      ))}
-    </span>
-  );
-}
-
 function MaterialRow({
   node,
   inventory,
@@ -39,13 +23,15 @@ function MaterialRow({
   inventory: InventoryMap;
   depth: number;
 }) {
+  const [expanded, setExpanded] = useState(false);
   const need = node.quantity;
   const have = Math.max(0, inventory[node.name] ?? 0);
   const enough = have >= need && need > 0;
   const short = have < need;
+  const hasRecipe = node.children.length > 0;
 
   return (
-    <div>
+    <div className={cn(depth > 0 && "ml-3 border-l border-border/50 pl-2")}>
       <div
         className={cn(
           "flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors",
@@ -54,7 +40,6 @@ function MaterialRow({
           enough && "bg-emerald-500/5",
         )}
       >
-        <DepthArrows depth={depth} />
         <ItemIcon name={node.name} size="sm" />
         <Link
           href={`/item/${itemToSlug(node.name)}`}
@@ -79,14 +64,40 @@ function MaterialRow({
         </div>
       </div>
 
-      {node.children.map((child) => (
-        <MaterialRow key={child.id} node={child} inventory={inventory} depth={depth + 1} />
-      ))}
+      {hasRecipe && (
+        <button
+          type="button"
+          className={cn(
+            "mt-1 flex w-full items-center justify-between gap-2 rounded-md border border-dashed px-2.5 py-1.5 text-left text-xs transition-colors",
+            expanded
+              ? "border-primary/40 bg-primary/5 text-foreground"
+              : "border-border/70 text-muted-foreground hover:border-primary/35 hover:bg-accent/40 hover:text-foreground",
+          )}
+          aria-expanded={expanded}
+          onClick={() => setExpanded((prev) => !prev)}
+        >
+          <span>
+            {expanded ? "Hide recipe" : "Show recipe"} · {node.children.length} material
+            {node.children.length === 1 ? "" : "s"}
+          </span>
+          <ChevronDown
+            className={cn("h-3.5 w-3.5 shrink-0 transition-transform", expanded && "rotate-180")}
+          />
+        </button>
+      )}
+
+      {hasRecipe && expanded && (
+        <div className="mt-1.5 space-y-1">
+          {node.children.map((child) => (
+            <MaterialRow key={child.id} node={child} inventory={inventory} depth={depth + 1} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-/** One top-level material square with arrow-nested craft children. */
+/** One top-level material square; craft recipes expand below on click. */
 export function MaterialTreeCard({ node, inventory }: MaterialTreeCardProps) {
   return (
     <div className="rounded-lg border border-border/70 bg-card/70 p-2 shadow-sm print:break-inside-avoid">
