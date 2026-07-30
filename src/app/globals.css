@@ -263,3 +263,25 @@
     font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
   }
 }
+
+@media print {
+  .site-chrome {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    background-image: none !important;
+    color: black !important;
+  }
+
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+}

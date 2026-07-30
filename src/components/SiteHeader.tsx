@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Anvil, Columns2, GitFork, ListChecks, Moon, Sun } from "lucide-react";
+import { Anvil, Columns2, GitFork, ListChecks, Moon, Search, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useElementTheme } from "@/components/ThemeProvider";
@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/", label: "Calculator", icon: Anvil },
+  { href: "/browse", label: "Browse", icon: Search },
   { href: "/compare", label: "Compare", icon: Columns2 },
   { href: "/tree", label: "Crafting Tree", icon: GitFork },
   { href: "/shopping-list", label: "Shopping List", icon: ListChecks },
@@ -33,7 +34,7 @@ export function SiteHeader() {
   useEffect(() => setMounted(true), []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
+    <header className="site-chrome sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link href="/" className="group flex items-center gap-2">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm transition-transform group-hover:scale-105">

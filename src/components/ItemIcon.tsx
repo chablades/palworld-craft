@@ -14,7 +14,7 @@ const SIZE = {
   lg: "h-14 w-14",
 } as const;
 
-/** Placeholder item art until real Palworld sprites are available (`/public/items/*.svg`). */
+/** Placeholder item art (`/public/items/*.svg`). Official Palworld sprites are not bundled — see docs/ASSETS.md. */
 export function ItemIcon({ name, className, size = "sm" }: ItemIconProps) {
   const src = `/items/${itemToSlug(name)}.svg`;
   const category = getItemCategory(name);

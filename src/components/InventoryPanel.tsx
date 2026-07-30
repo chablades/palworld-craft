@@ -20,7 +20,7 @@ export function InventoryPanel({
   if (itemNames.length === 0) return null;
 
   return (
-    <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
+    <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4 print:hidden">
       <div>
         <Label className="text-sm font-semibold">Storage</Label>
         <p className="mt-1 text-xs text-muted-foreground">{description}</p>
