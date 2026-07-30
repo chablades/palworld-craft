@@ -14,6 +14,8 @@ interface ResultLineProps {
   showStation?: boolean;
   showTech?: boolean;
   showUsedBy?: boolean;
+  /** Show need/have totals colored by Storage sufficiency. */
+  showNeedHave?: boolean;
   step?: number;
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
@@ -25,6 +27,7 @@ export function ResultLine({
   showStation = false,
   showTech = false,
   showUsedBy = false,
+  showNeedHave = false,
   step,
   checked,
   onCheckedChange,
@@ -32,14 +35,17 @@ export function ResultLine({
   const station = showStation ? getStation(line.name) : undefined;
   const tech = showTech ? getTechInfo(line.name) : null;
   const usedBy = showUsedBy ? getUsedBy(line.name) : [];
-  const covered = line.remaining === 0 && line.required > 0;
-  const done = checked || covered;
+  const enough = line.owned >= line.required && line.required > 0;
+  const short = line.owned < line.required;
+  const done = Boolean(checked) || (showNeedHave && enough);
 
   return (
     <li
       className={cn(
         "rounded-md border border-border/50 px-3 py-2 text-sm transition-colors",
         done && "bg-primary/5",
+        showNeedHave && enough && "border-emerald-500/35",
+        showNeedHave && short && "border-red-500/25",
       )}
     >
       <div className="flex items-start gap-3">
@@ -92,12 +98,31 @@ export function ResultLine({
           )}
         </div>
         <div className="shrink-0 text-right font-mono text-sm tabular-nums">
-          <p className="font-semibold" aria-label={`Need ${line.required}`}>
-            {line.required}
-          </p>
-          {line.owned > 0 && (
-            <p className="text-xs text-muted-foreground">
-              {line.remaining} left (−{line.owned} owned)
+          {showNeedHave ? (
+            <>
+              <p
+                className={cn(
+                  "font-semibold",
+                  enough ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400",
+                )}
+                aria-label={`Need ${line.required}, have ${line.owned}`}
+              >
+                <span>{line.required}</span>
+                <span className="mx-0.5 text-muted-foreground">/</span>
+                <span>{line.owned}</span>
+              </p>
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                need / have
+              </p>
+              {short && (
+                <p className="text-xs text-red-600 dark:text-red-400">
+                  short {line.required - line.owned}
+                </p>
+              )}
+            </>
+          ) : (
+            <p className="font-semibold" aria-label={`Need ${line.required}`}>
+              {line.required}
             </p>
           )}
         </div>

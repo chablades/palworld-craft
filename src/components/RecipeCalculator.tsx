@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Check, Copy, Link2, Star } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -31,13 +31,19 @@ import {
 import {
   loadChecklist,
   loadFavorites,
+  loadInventory,
   loadRecent,
   pushRecent,
   saveChecklist,
   toggleFavorite,
   type ChecklistMap,
 } from "@/lib/storage";
+import type { InventoryMap, OffsetLine } from "@/lib/types";
 import { cn } from "@/lib/utils";
+
+function countShort(lines: OffsetLine[]) {
+  return lines.filter((line) => line.owned < line.required).length;
+}
 
 export function RecipeCalculator() {
   const searchParams = useSearchParams();
@@ -54,6 +60,7 @@ export function RecipeCalculator() {
   const [amount, setAmount] = useState(
     Number.isFinite(initialQty) && initialQty > 0 ? Math.floor(initialQty) : 1,
   );
+  const [inventory, setInventory] = useState<InventoryMap>({});
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recent, setRecent] = useState<string[]>([]);
   const [checklist, setChecklist] = useState<ChecklistMap>({});
@@ -66,11 +73,29 @@ export function RecipeCalculator() {
   const tech = getTechInfo(item);
   const isFavorite = favorites.includes(item);
 
+  const refreshStorage = useCallback(() => {
+    setInventory(loadInventory());
+  }, []);
+
   useEffect(() => {
     setFavorites(loadFavorites());
     setRecent(loadRecent());
+    refreshStorage();
     setHydrated(true);
-  }, []);
+  }, [refreshStorage]);
+
+  useEffect(() => {
+    const onFocus = () => refreshStorage();
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === "palcraft:inventory" || event.key === null) refreshStorage();
+    };
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, [refreshStorage]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -91,15 +116,18 @@ export function RecipeCalculator() {
     }
   }, [item, qty, craftables]);
 
-  // No storage offsets on the calculator — show full required amounts only.
+  // Need = full calculated requirement. Have = Storage stock (comparison only).
   const rawLines = useMemo(
-    () => (result ? applyInventoryOffsets(result.raws, {}) : []),
-    [result],
+    () => (result ? applyInventoryOffsets(result.raws, inventory) : []),
+    [result, inventory],
   );
   const craftLines = useMemo(
-    () => (result ? applyCraftOffsets(result.crafts, {}) : []),
-    [result],
+    () => (result ? applyCraftOffsets(result.crafts, inventory) : []),
+    [result, inventory],
   );
+
+  const rawShort = countShort(rawLines);
+  const craftShort = countShort(craftLines);
 
   function syncUrl(nextItem: string, nextQty: number) {
     const params = buildShareSearchParams({
@@ -114,6 +142,7 @@ export function RecipeCalculator() {
     setItem(nextItem);
     setAmount(nextAmount);
     setRecent(pushRecent(nextItem));
+    refreshStorage();
     syncUrl(nextItem, nextAmount);
   }
 
@@ -154,8 +183,14 @@ export function RecipeCalculator() {
         <CardHeader>
           <CardTitle>Recipe Calculator</CardTitle>
           <CardDescription>
-            Choose an item and quantity to see every ingredient you need — raw materials and
-            intermediate crafts. Totals update live.
+            Pick an item and quantity. We calculate the total materials you need. Each line shows{" "}
+            <span className="font-medium text-foreground">need / have</span> from your{" "}
+            <Link href="/storage" className="underline-offset-2 hover:underline">
+              Storage
+            </Link>
+            {" — "}
+            <span className="text-red-600 dark:text-red-400">red</span> if short,{" "}
+            <span className="text-emerald-600 dark:text-emerald-400">green</span> if you have enough.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -183,7 +218,10 @@ export function RecipeCalculator() {
                 id="item"
                 value={item}
                 options={craftables}
-                onValueChange={setItem}
+                onValueChange={(name) => {
+                  setItem(name);
+                  refreshStorage();
+                }}
                 onEnterCommit={(name) => submitPlan(name, amount)}
                 placeholder="Type a craftable item…"
               />
@@ -216,21 +254,41 @@ export function RecipeCalculator() {
             >
               <Star className={cn("h-4 w-4", isFavorite && "fill-current text-amber-500")} />
             </Button>
-            <Button type="submit">Update link</Button>
+            <Button type="submit">Calculate</Button>
           </form>
 
           {result && (
-            <p className="text-sm text-muted-foreground">
-              Ingredients needed for{" "}
-              <span className="font-medium text-foreground">
-                {qty}× {item}
-              </span>
-              . Track owned materials on the{" "}
-              <Link href="/storage" className="underline-offset-2 hover:underline">
-                Storage
-              </Link>{" "}
-              tab.
-            </p>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+              <p>
+                Total materials for{" "}
+                <span className="font-medium text-foreground">
+                  {qty}× {item}
+                </span>
+              </p>
+              <p className="text-muted-foreground">
+                Raws:{" "}
+                <span
+                  className={cn(
+                    "font-medium",
+                    rawShort === 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400",
+                  )}
+                >
+                  {rawLines.length - rawShort}/{rawLines.length} covered
+                </span>
+                {" · "}
+                Crafts:{" "}
+                <span
+                  className={cn(
+                    "font-medium",
+                    craftShort === 0
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-red-600 dark:text-red-400",
+                  )}
+                >
+                  {craftLines.length - craftShort}/{craftLines.length} covered
+                </span>
+              </p>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -260,6 +318,9 @@ export function RecipeCalculator() {
                 Open crafting tree
               </Link>
             </Button>
+            <Button type="button" variant="ghost" size="sm" asChild>
+              <Link href="/storage">Edit storage</Link>
+            </Button>
           </div>
 
           <EfficiencyTips crafts={result.crafts} />
@@ -272,7 +333,7 @@ export function RecipeCalculator() {
                   <Badge variant="raw">{rawLines.length}</Badge>
                 </CardTitle>
                 <CardDescription>
-                  Gather these for {qty}× {item}.
+                  Calculated need for {qty}× {item}. Right side is need / have from Storage.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -283,6 +344,7 @@ export function RecipeCalculator() {
                       line={line}
                       showMeta
                       showUsedBy
+                      showNeedHave
                       checked={Boolean(checklist[`raw:${line.name}`])}
                       onCheckedChange={(checked) =>
                         setChecklist((prev) => ({
@@ -306,7 +368,8 @@ export function RecipeCalculator() {
                   <Badge variant="crafted">{craftLines.length}</Badge>
                 </CardTitle>
                 <CardDescription>
-                  Bottom-up order — craft intermediates before dependents.
+                  Bottom-up crafts for {qty}× {item}. need / have uses Storage if you stock
+                  intermediates too.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -317,6 +380,7 @@ export function RecipeCalculator() {
                       line={line}
                       showStation
                       showTech
+                      showNeedHave
                       step={index + 1}
                       checked={Boolean(checklist[`craft:${line.name}`])}
                       onCheckedChange={(checked) =>
