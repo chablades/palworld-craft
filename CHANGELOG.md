@@ -4,9 +4,6 @@ All notable updates to Palcraft are listed here. Newest entries first.
 
 ## 2026-07-30
 
-<<<<<<< HEAD
-- Add AGENTS.md with Cursor Cloud specific setup and run instructions
-=======
 - Sync recipe data to Palworld v1.0.2: fix tech levels for 9 components (Carbon Fiber, Circuit Board, Computer, Bio Battery, Corrosive Solvent, Polymer, Plasteel, Thermal Core, AI Core)
 - Fix station errors: Bio Battery → Production Assembly Line II, Plasteel → Electric Furnace, AI Core → Advanced Workshop
 - Fix Plasteel ingredients (Crude Oil 2 + Ore 5, removing Paldium Fragment) and Pal Metal Ingot ingredients (Ore 4 + Pure Quartz 1 + Paldium Fragment 2)
@@ -17,7 +14,7 @@ All notable updates to Palcraft are listed here. Newest entries first.
 - Bump GAME_VERSION from 0.4.x to 1.0.2
 - Fix calculator/typeahead so Enter and Calculate resolve the typed item and run the plan
 - Add Palworld recipe-data agent skill and deep-dive brief for accurate resource totals
->>>>>>> fddf375 (Fix calculator submit and seed Palworld v1.0.2 recipe accuracy.)
+- Add AGENTS.md with Cursor Cloud specific setup and run instructions
 - Expand recipe book across armor, weapons, spheres, structures, food, ammo, and tools
 - Fill remaining raw-material pal-drop metadata
 - Add Browse page wiring RecipeSearch into site navigation
