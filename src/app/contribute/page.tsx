@@ -43,16 +43,16 @@ export default function ContributePage() {
             <li>
               Open a PR against{" "}
               <Link
-                href="https://github.com/chablades/palworld-recipes"
+                href="https://github.com/chablades/palworld-craft"
                 className="text-primary underline-offset-2 hover:underline"
               >
-                github.com/chablades/palworld-recipes
+                github.com/chablades/palworld-craft
               </Link>
             </li>
           </ol>
           <p>
             See also{" "}
-            <Link href="https://github.com/chablades/palworld-recipes/blob/main/CONTRIBUTING.md" className="text-primary underline-offset-2 hover:underline">
+            <Link href="https://github.com/chablades/palworld-craft/blob/main/CONTRIBUTING.md" className="text-primary underline-offset-2 hover:underline">
               CONTRIBUTING.md
             </Link>{" "}
             in the repo.
