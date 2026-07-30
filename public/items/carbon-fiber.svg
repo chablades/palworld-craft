@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Carbon Fiber">
+  <defs>
+    <linearGradient id="g113015687" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.72"/>
+    </linearGradient>
+    <pattern id="p113015687" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(7)">
+      <circle cx="2" cy="2" r="1.2" fill="#0c4a6e" fill-opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect width="128" height="128" rx="20" fill="url(#g113015687)"/>
+  <rect width="128" height="128" rx="20" fill="url(#p113015687)"/>
+  <rect x="10" y="10" width="108" height="108" rx="14" fill="none" stroke="#0c4a6e" stroke-opacity="0.18" stroke-width="3"/>
+  <text x="64" y="48" text-anchor="middle" font-size="22" font-weight="700" fill="#0c4a6e" fill-opacity="0.35" font-family="Segoe UI, Arial, sans-serif">C</text>
+  <text x="64" y="86" text-anchor="middle" font-size="28" font-weight="700" fill="#0c4a6e" font-family="Segoe UI, Arial, sans-serif" letter-spacing="1">CF</text>
+</svg>

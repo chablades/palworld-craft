@@ -49,7 +49,7 @@ export default async function ItemPage({ params }: PageProps) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex items-start gap-3">
-          <ItemIcon name={name} size="md" />
+          <ItemIcon name={name} size="lg" />
           <div>
             <h1 className="font-display text-3xl tracking-tight">{name}</h1>
             <div className="mt-2 flex flex-wrap gap-2">

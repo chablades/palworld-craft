@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "convert-recipes": "tsx scripts/convert-recipes.ts"
+    "convert-recipes": "tsx scripts/convert-recipes.ts",
+    "generate-item-placeholders": "node scripts/generate-item-placeholders.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",

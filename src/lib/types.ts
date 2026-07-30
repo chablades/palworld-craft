@@ -2,6 +2,8 @@ export type RawMarker = "RAW";
 
 export interface RawMaterialDefinition {
   type: "RAW";
+  /** Material / item class for grouped browsing (Ores, Pal Materials, Ingots, …). */
+  category?: string;
   /** Where the material is commonly obtained (mining, chests, merchants, etc.). */
   sources?: string[];
   /** Pals known to drop this material. */
@@ -10,6 +12,8 @@ export interface RawMaterialDefinition {
 
 export interface RecipeDefinition {
   ingredients: Record<string, number>;
+  /** Material / item class for grouped browsing (Ores, Pal Materials, Ingots, …). */
+  category?: string;
   /** Crafting station where this recipe is made. */
   station?: string;
   /** Technology / Ancient Technology level required to unlock. */
@@ -99,6 +103,9 @@ export function validateRecipeBook(data: unknown): data is RecipeBookData {
 
     if ("type" in entry && (entry as RawMaterialDefinition).type === "RAW") {
       const raw = entry as RawMaterialDefinition;
+      if (raw.category !== undefined && (typeof raw.category !== "string" || !raw.category.trim())) {
+        return false;
+      }
       if (raw.sources !== undefined && !isNonEmptyStringArray(raw.sources)) {
         return false;
       }
@@ -112,6 +119,9 @@ export function validateRecipeBook(data: unknown): data is RecipeBookData {
     if (!("ingredients" in entry)) return false;
     const recipe = entry as RecipeDefinition;
     if (typeof recipe.ingredients !== "object" || recipe.ingredients === null) {
+      return false;
+    }
+    if (recipe.category !== undefined && (typeof recipe.category !== "string" || !recipe.category.trim())) {
       return false;
     }
     if (recipe.station !== undefined && typeof recipe.station !== "string") {

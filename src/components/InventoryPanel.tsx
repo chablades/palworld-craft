@@ -15,14 +15,14 @@ export function InventoryPanel({
   itemNames,
   inventory,
   onChange,
-  description = "Enter amounts you already own. Remaining needs update automatically.",
+  description = "Amounts in storage are subtracted from remaining needs.",
 }: InventoryPanelProps) {
   if (itemNames.length === 0) return null;
 
   return (
     <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4">
       <div>
-        <Label className="text-sm font-semibold">I already have</Label>
+        <Label className="text-sm font-semibold">Storage</Label>
         <p className="mt-1 text-xs text-muted-foreground">{description}</p>
       </div>
       <ul className="grid gap-2 sm:grid-cols-2">
@@ -35,7 +35,7 @@ export function InventoryPanel({
               min={0}
               value={inventory[name] ?? 0}
               onChange={(e) => onChange(name, Math.max(0, Number(e.target.value) || 0))}
-              aria-label={`Owned ${name}`}
+              aria-label={`Storage ${name}`}
             />
           </li>
         ))}

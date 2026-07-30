@@ -22,6 +22,7 @@ import {
 import {
   buildShareSearchParams,
   copyText,
+  formatResultsJson,
   formatResultsMarkdown,
   formatResultsPlain,
   parseInventoryParam,
@@ -58,7 +59,7 @@ export function ShoppingList() {
   const [inventory, setInventory] = useState<InventoryMap>({});
   const [checklist, setChecklist] = useState<ChecklistMap>({});
   const [hydrated, setHydrated] = useState(false);
-  const [copyStatus, setCopyStatus] = useState<"idle" | "plain" | "md" | "link">("idle");
+  const [copyStatus, setCopyStatus] = useState<"idle" | "plain" | "md" | "json" | "link">("idle");
 
   const planKey = useMemo(
     () =>
@@ -159,15 +160,18 @@ export function ShoppingList() {
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
-  async function handleCopy(format: "plain" | "md") {
+  async function handleCopy(format: "plain" | "md" | "json") {
     const title =
       items.length === 0
         ? "Shopping list"
         : `Shopping list (${items.map((i) => `${i.amount}× ${i.name}`).join(", ")})`;
+    const sections = { title, raws: rawLines, crafts: craftLines };
     const payload =
       format === "plain"
-        ? formatResultsPlain({ title, raws: rawLines, crafts: craftLines })
-        : formatResultsMarkdown({ title, raws: rawLines, crafts: craftLines });
+        ? formatResultsPlain(sections)
+        : format === "md"
+          ? formatResultsMarkdown(sections)
+          : formatResultsJson(sections);
     const ok = await copyText(payload);
     if (ok) {
       setCopyStatus(format);
@@ -193,7 +197,7 @@ export function ShoppingList() {
           <CardTitle>Batch Shopping List</CardTitle>
           <CardDescription>
             Queue multiple craft targets and get a combined raw materials list plus crafting
-            steps. List and inventory persist in this browser.
+            steps. List and storage persist in this browser.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -273,6 +277,10 @@ export function ShoppingList() {
             <Button type="button" variant="outline" size="sm" onClick={() => handleCopy("md")}>
               {copyStatus === "md" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               Copy Markdown
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={() => handleCopy("json")}>
+              {copyStatus === "json" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              Copy JSON
             </Button>
             <Button type="button" variant="outline" size="sm" onClick={handleCopyLink}>
               {copyStatus === "link" ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
