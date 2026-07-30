@@ -14,7 +14,7 @@ export function EfficiencyTips({ crafts }: EfficiencyTipsProps) {
   if (tips.length === 0) return null;
 
   return (
-    <Card className="border-primary/25 bg-primary/5">
+    <Card className="border-primary/25 bg-primary/5 print:hidden">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <Layers className="h-4 w-4 text-primary" />

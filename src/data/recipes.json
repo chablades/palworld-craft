@@ -75,6 +75,39 @@
       "techLevel": 1,
       "category": "Food"
     },
+    "Beautiful Flower": {
+      "type": "RAW",
+      "sources": [
+        "Flower patches",
+        "Ranch"
+      ],
+      "drops": [
+        "Flopie",
+        "Petallia",
+        "Lyleen"
+      ],
+      "category": "Natural Resources"
+    },
+    "Berry Plantation": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Wood": 40,
+        "Stone": 20,
+        "Fiber": 40,
+        "Pal Fluids": 10
+      },
+      "techLevel": 5,
+      "category": "Structures"
+    },
+    "Berry Salad": {
+      "station": "Cooking Pot",
+      "ingredients": {
+        "Red Berries": 3,
+        "Honey": 1
+      },
+      "techLevel": 6,
+      "category": "Food"
+    },
     "Bio Battery": {
       "station": "Production Assembly Line",
       "ingredients": {
@@ -97,6 +130,22 @@
         "Mammorest"
       ],
       "category": "Pal Materials"
+    },
+    "Bread": {
+      "station": "Cooking Pot",
+      "ingredients": {
+        "Flour": 1
+      },
+      "techLevel": 8,
+      "category": "Food"
+    },
+    "Campfire": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 10
+      },
+      "techLevel": 1,
+      "category": "Structures"
     },
     "Carbon Fiber": {
       "station": "Production Assembly Line",
@@ -163,6 +212,17 @@
       ],
       "category": "Ores"
     },
+    "Coal Mine": {
+      "station": "Production Assembly Line",
+      "ingredients": {
+        "Refined Ingot": 50,
+        "Wood": 50,
+        "Stone": 40,
+        "Paldium Fragment": 20
+      },
+      "techLevel": 22,
+      "category": "Structures"
+    },
     "Coarse Ammo": {
       "station": "Weapon Workbench",
       "ingredients": {
@@ -171,6 +231,25 @@
       },
       "techLevel": 10,
       "category": "Ammo"
+    },
+    "Cold Resistant Metal Armor": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Ingot": 40,
+        "Leather": 10,
+        "Ice Organ": 8
+      },
+      "techLevel": 15,
+      "category": "Armor"
+    },
+    "Cold Resistant Pelt Armor": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Leather": 15,
+        "Ice Organ": 5
+      },
+      "techLevel": 9,
+      "category": "Armor"
     },
     "Common Shield": {
       "station": "Primitive Workbench",
@@ -193,6 +272,15 @@
       },
       "techLevel": 28,
       "category": "Components"
+    },
+    "Cooking Pot": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 20,
+        "Ingot": 10
+      },
+      "techLevel": 4,
+      "category": "Structures"
     },
     "Corrosive Solvent": {
       "station": "Production Assembly Line",
@@ -220,7 +308,51 @@
         "Oil fields",
         "Crude Oil Extractor"
       ],
-      "category": "Ores"
+      "category": "Ores",
+      "drops": [
+        "Dumud"
+      ]
+    },
+    "Crusher": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Wood": 50,
+        "Stone": 40,
+        "Paldium Fragment": 10
+      },
+      "techLevel": 6,
+      "category": "Structures"
+    },
+    "Decoy Grenade": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Fiber": 10,
+        "Flame Organ": 1
+      },
+      "techLevel": 15,
+      "category": "Ammo"
+    },
+    "Double-barreled Shotgun": {
+      "station": "Weapon Assembly Line",
+      "ingredients": {
+        "Refined Ingot": 30,
+        "Polymer": 8,
+        "Carbon Fiber": 10
+      },
+      "techLevel": 26,
+      "category": "Weapons"
+    },
+    "Egg": {
+      "type": "RAW",
+      "sources": [
+        "Ranch",
+        "Bird pals"
+      ],
+      "drops": [
+        "Chikipi",
+        "Tocotoco"
+      ],
+      "category": "Food"
     },
     "Electric Organ": {
       "type": "RAW",
@@ -235,6 +367,45 @@
         "Orserk"
       ],
       "category": "Pal Materials"
+    },
+    "Exotic Sphere": {
+      "station": "Sphere Assembly Line II",
+      "ingredients": {
+        "Paldium Fragment": 15,
+        "Pal Metal Ingot": 8,
+        "Carbon Fiber": 5,
+        "Cement": 8
+      },
+      "techLevel": 45,
+      "techType": "ancient",
+      "category": "Spheres"
+    },
+    "Explosive Arrow": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Wood": 5,
+        "Stone": 5,
+        "Gunpowder": 1
+      },
+      "techLevel": 17,
+      "category": "Ammo"
+    },
+    "Feathered Hair Band": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Fiber": 10,
+        "Beautiful Flower": 1
+      },
+      "techLevel": 5,
+      "category": "Armor"
+    },
+    "Feed Box": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 20
+      },
+      "techLevel": 2,
+      "category": "Structures"
     },
     "Fiber": {
       "type": "RAW",
@@ -272,6 +443,32 @@
       ],
       "category": "Pal Materials"
     },
+    "Flour": {
+      "station": "Mill",
+      "ingredients": {
+        "Wheat": 1
+      },
+      "techLevel": 8,
+      "category": "Food"
+    },
+    "Frag Grenade": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Fiber": 10,
+        "Gunpowder": 2,
+        "Flame Organ": 1
+      },
+      "techLevel": 22,
+      "category": "Ammo"
+    },
+    "Fried Eggs": {
+      "station": "Campfire",
+      "ingredients": {
+        "Egg": 1
+      },
+      "techLevel": 1,
+      "category": "Food"
+    },
     "Giga Sphere": {
       "station": "Sphere Workbench",
       "ingredients": {
@@ -282,6 +479,14 @@
       },
       "techLevel": 20,
       "category": "Spheres"
+    },
+    "Grilled Meat": {
+      "station": "Campfire",
+      "ingredients": {
+        "Meat": 1
+      },
+      "techLevel": 1,
+      "category": "Food"
     },
     "Gunpowder": {
       "station": "High Quality Workbench",
@@ -310,13 +515,45 @@
       "techLevel": 14,
       "category": "Ammo"
     },
+    "Heat Resistant Metal Armor": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Ingot": 40,
+        "Leather": 10,
+        "Flame Organ": 8
+      },
+      "techLevel": 15,
+      "category": "Armor"
+    },
+    "Heat Resistant Pelt Armor": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Leather": 15,
+        "Flame Organ": 5
+      },
+      "techLevel": 9,
+      "category": "Armor"
+    },
+    "Heat Resistant Undershirt": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Cloth": 3,
+        "Flame Organ": 2
+      },
+      "techLevel": 6,
+      "category": "Armor"
+    },
     "Hexolite": {
       "type": "RAW",
       "sources": [
         "Feybreak Island",
         "Mining"
       ],
-      "category": "Ingots"
+      "category": "Ingots",
+      "drops": [
+        "Xenovader",
+        "Selyne"
+      ]
     },
     "High Quality Cloth": {
       "station": "Production Assembly Line",
@@ -336,6 +573,39 @@
         "Dumud",
         "Relaxaurus",
         "Jormuntide"
+      ],
+      "category": "Pal Materials"
+    },
+    "Honey": {
+      "type": "RAW",
+      "sources": [
+        "Beehive",
+        "Ranch"
+      ],
+      "drops": [
+        "Beegarde",
+        "Elizabee"
+      ],
+      "category": "Food"
+    },
+    "Honey Glazed Lamball": {
+      "station": "Cooking Pot",
+      "ingredients": {
+        "Meat": 2,
+        "Honey": 2
+      },
+      "techLevel": 12,
+      "category": "Food"
+    },
+    "Horn": {
+      "type": "RAW",
+      "sources": [
+        "Hunting horned pals"
+      ],
+      "drops": [
+        "Incineram",
+        "Univolt",
+        "Eikthyrdeer"
       ],
       "category": "Pal Materials"
     },
@@ -371,6 +641,25 @@
       "techLevel": 3,
       "category": "Ingots"
     },
+    "Jam-filled Bun": {
+      "station": "Cooking Pot",
+      "ingredients": {
+        "Flour": 1,
+        "Red Berries": 2,
+        "Milk": 1
+      },
+      "techLevel": 10,
+      "category": "Food"
+    },
+    "Katana": {
+      "station": "Weapon Assembly Line",
+      "ingredients": {
+        "Refined Ingot": 30,
+        "High Quality Cloth": 5
+      },
+      "techLevel": 28,
+      "category": "Weapons"
+    },
     "Leather": {
       "type": "RAW",
       "sources": [
@@ -397,6 +686,51 @@
       "techType": "ancient",
       "category": "Spheres"
     },
+    "Lettuce": {
+      "type": "RAW",
+      "sources": [
+        "Lettuce plantations",
+        "Farming"
+      ],
+      "category": "Food",
+      "drops": [
+        "Caprity",
+        "Gumoss"
+      ]
+    },
+    "Logging Site": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Wood": 50,
+        "Stone": 20,
+        "Paldium Fragment": 10
+      },
+      "techLevel": 7,
+      "category": "Structures"
+    },
+    "Makeshift Handgun": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Ingot": 20,
+        "High Quality Pal Oil": 5
+      },
+      "techLevel": 12,
+      "category": "Weapons"
+    },
+    "Meat": {
+      "type": "RAW",
+      "sources": [
+        "Hunting",
+        "Butchering"
+      ],
+      "drops": [
+        "Lamball",
+        "Rushoar",
+        "Caprity",
+        "Mammorest"
+      ],
+      "category": "Food"
+    },
     "Mega Sphere": {
       "station": "Sphere Workbench",
       "ingredients": {
@@ -418,6 +752,15 @@
       "techLevel": 12,
       "category": "Armor"
     },
+    "Metal Axe": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Ingot": 10,
+        "Wood": 15
+      },
+      "techLevel": 8,
+      "category": "Tools"
+    },
     "Metal Helm": {
       "station": "High Quality Workbench",
       "ingredients": {
@@ -426,6 +769,55 @@
       },
       "techLevel": 12,
       "category": "Armor"
+    },
+    "Metal Pickaxe": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Ingot": 10,
+        "Wood": 15
+      },
+      "techLevel": 8,
+      "category": "Tools"
+    },
+    "Metal Shield": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Ingot": 20,
+        "Paldium Fragment": 15,
+        "Leather": 10
+      },
+      "techLevel": 12,
+      "category": "Armor"
+    },
+    "Metal Spear": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Ingot": 10,
+        "Wood": 20
+      },
+      "techLevel": 8,
+      "category": "Weapons"
+    },
+    "Milk": {
+      "type": "RAW",
+      "sources": [
+        "Ranch"
+      ],
+      "drops": [
+        "Mozzarina",
+        "Melpaca"
+      ],
+      "category": "Food"
+    },
+    "Mill": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Wood": 50,
+        "Stone": 40,
+        "Ingot": 10
+      },
+      "techLevel": 8,
+      "category": "Structures"
     },
     "Musket": {
       "station": "Weapon Workbench",
@@ -444,6 +836,15 @@
       },
       "techLevel": 3,
       "category": "Components"
+    },
+    "Nail Gun": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Ingot": 20,
+        "Nail": 20
+      },
+      "techLevel": 11,
+      "category": "Tools"
     },
     "Old Bow": {
       "station": "Primitive Workbench",
@@ -467,6 +868,17 @@
         "Dumud"
       ],
       "category": "Ores"
+    },
+    "Ore Mining Site": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Ingot": 50,
+        "Wood": 50,
+        "Stone": 40,
+        "Paldium Fragment": 20
+      },
+      "techLevel": 15,
+      "category": "Structures"
     },
     "Pal Fluids": {
       "type": "RAW",
@@ -518,6 +930,16 @@
       "techLevel": 2,
       "category": "Spheres"
     },
+    "Palbox": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Paldium Fragment": 1,
+        "Wood": 8,
+        "Stone": 3
+      },
+      "techLevel": 1,
+      "category": "Structures"
+    },
     "Paldium Fragment": {
       "type": "RAW",
       "sources": [
@@ -525,7 +947,21 @@
         "Crusher",
         "Mining stone"
       ],
-      "category": "Ores"
+      "category": "Ores",
+      "drops": [
+        "Digtoise",
+        "Astegon"
+      ]
+    },
+    "Pancake": {
+      "station": "Cooking Pot",
+      "ingredients": {
+        "Flour": 1,
+        "Egg": 1,
+        "Milk": 1
+      },
+      "techLevel": 9,
+      "category": "Food"
     },
     "Pelt Armor": {
       "station": "High Quality Workbench",
@@ -564,13 +1000,46 @@
       "techLevel": 12,
       "category": "Components"
     },
+    "Primitive Furnace": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 20,
+        "Stone": 50
+      },
+      "techLevel": 2,
+      "category": "Structures"
+    },
+    "Pump-action Shotgun": {
+      "station": "Weapon Assembly Line",
+      "ingredients": {
+        "Refined Ingot": 40,
+        "Polymer": 10,
+        "Carbon Fiber": 15
+      },
+      "techLevel": 30,
+      "category": "Weapons"
+    },
     "Pure Quartz": {
       "type": "RAW",
       "sources": [
         "Desert / snow mining",
         "Quartz nodes"
       ],
-      "category": "Ores"
+      "category": "Ores",
+      "drops": [
+        "Digtoise",
+        "Anubis"
+      ]
+    },
+    "Ranch": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Wood": 50,
+        "Stone": 20,
+        "Fiber": 30
+      },
+      "techLevel": 5,
+      "category": "Structures"
     },
     "Red Berries": {
       "type": "RAW",
@@ -603,6 +1072,15 @@
       "techLevel": 22,
       "category": "Armor"
     },
+    "Refined Metal Axe": {
+      "station": "Production Assembly Line",
+      "ingredients": {
+        "Refined Ingot": 15,
+        "Wood": 20
+      },
+      "techLevel": 18,
+      "category": "Tools"
+    },
     "Refined Metal Helm": {
       "station": "Production Assembly Line",
       "ingredients": {
@@ -612,6 +1090,24 @@
       "techLevel": 22,
       "category": "Armor"
     },
+    "Refined Metal Pickaxe": {
+      "station": "Production Assembly Line",
+      "ingredients": {
+        "Refined Ingot": 15,
+        "Wood": 20
+      },
+      "techLevel": 18,
+      "category": "Tools"
+    },
+    "Repair Kit": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Ingot": 5,
+        "Stone": 10
+      },
+      "techLevel": 3,
+      "category": "Components"
+    },
     "Rifle Ammo": {
       "station": "Weapon Workbench",
       "ingredients": {
@@ -619,6 +1115,53 @@
         "Gunpowder": 2
       },
       "techLevel": 18,
+      "category": "Ammo"
+    },
+    "Rocket Ammo": {
+      "station": "Weapon Assembly Line II",
+      "ingredients": {
+        "Pal Metal Ingot": 2,
+        "Gunpowder": 5
+      },
+      "techLevel": 40,
+      "category": "Ammo"
+    },
+    "Rocket Launcher": {
+      "station": "Weapon Assembly Line II",
+      "ingredients": {
+        "Pal Metal Ingot": 50,
+        "Polymer": 20,
+        "Carbon Fiber": 30
+      },
+      "techLevel": 40,
+      "category": "Weapons"
+    },
+    "Salad": {
+      "station": "Cooking Pot",
+      "ingredients": {
+        "Red Berries": 2,
+        "Tomato": 2,
+        "Lettuce": 2
+      },
+      "techLevel": 14,
+      "category": "Food"
+    },
+    "Shock Grenade": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Fiber": 10,
+        "Electric Organ": 2
+      },
+      "techLevel": 20,
+      "category": "Ammo"
+    },
+    "Shotgun Shells": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Refined Ingot": 1,
+        "Gunpowder": 2
+      },
+      "techLevel": 26,
       "category": "Ammo"
     },
     "Single-shot Rifle": {
@@ -630,13 +1173,36 @@
       "techLevel": 18,
       "category": "Weapons"
     },
+    "Small Feed Bag": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Fiber": 5,
+        "Red Berries": 5
+      },
+      "techLevel": 2,
+      "category": "Components"
+    },
     "Solarite Ingot": {
       "type": "RAW",
       "sources": [
         "Feybreak Island",
         "Solarite nodes"
       ],
-      "category": "Ingots"
+      "category": "Ingots",
+      "drops": [
+        "Xenovader",
+        "Silvegis"
+      ]
+    },
+    "Sphere Workbench": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Paldium Fragment": 10,
+        "Wood": 30,
+        "Stone": 20
+      },
+      "techLevel": 2,
+      "category": "Structures"
     },
     "Stone": {
       "type": "RAW",
@@ -668,6 +1234,16 @@
       "techLevel": 1,
       "category": "Tools"
     },
+    "Stone Pit": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Wood": 50,
+        "Stone": 20,
+        "Paldium Fragment": 10
+      },
+      "techLevel": 7,
+      "category": "Structures"
+    },
     "Stone Spear": {
       "station": "Primitive Workbench",
       "ingredients": {
@@ -677,13 +1253,36 @@
       "techLevel": 3,
       "category": "Weapons"
     },
+    "Stone Structure Set": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Stone": 5,
+        "Wood": 2
+      },
+      "techLevel": 10,
+      "category": "Structures"
+    },
     "Sulfur": {
       "type": "RAW",
       "sources": [
         "Volcano region",
         "Sulfur Mine"
       ],
-      "category": "Ores"
+      "category": "Ores",
+      "drops": [
+        "Digtoise",
+        "Blazamut"
+      ]
+    },
+    "Sword": {
+      "station": "Weapon Workbench",
+      "ingredients": {
+        "Ingot": 25,
+        "Wood": 15,
+        "Stone": 10
+      },
+      "techLevel": 10,
+      "category": "Weapons"
     },
     "Thermal Core": {
       "station": "Production Assembly Line II",
@@ -696,6 +1295,47 @@
       "techLevel": 38,
       "techType": "ancient",
       "category": "Ancient"
+    },
+    "Thermal Underwear": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Cloth": 3,
+        "Ice Organ": 2
+      },
+      "techLevel": 6,
+      "category": "Armor"
+    },
+    "Tomato": {
+      "type": "RAW",
+      "sources": [
+        "Tomato plantations",
+        "Farming"
+      ],
+      "drops": [
+        "Caprity"
+      ],
+      "category": "Food"
+    },
+    "Torch": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 2,
+        "Red Berries": 1
+      },
+      "techLevel": 1,
+      "category": "Tools"
+    },
+    "Ultimate Sphere": {
+      "station": "Sphere Assembly Line II",
+      "ingredients": {
+        "Paldium Fragment": 20,
+        "Pal Metal Ingot": 10,
+        "Carbon Fiber": 8,
+        "Cement": 10
+      },
+      "techLevel": 48,
+      "techType": "ancient",
+      "category": "Spheres"
     },
     "Ultra Sphere": {
       "station": "Sphere Assembly Line II",
@@ -722,6 +1362,28 @@
       ],
       "category": "Pal Materials"
     },
+    "Weapon Workbench": {
+      "station": "High Quality Workbench",
+      "ingredients": {
+        "Ingot": 15,
+        "Wood": 40,
+        "Stone": 20
+      },
+      "techLevel": 3,
+      "category": "Structures"
+    },
+    "Wheat": {
+      "type": "RAW",
+      "sources": [
+        "Wheat plantations",
+        "Farming"
+      ],
+      "drops": [
+        "Caprity",
+        "Gumoss"
+      ],
+      "category": "Food"
+    },
     "Wood": {
       "type": "RAW",
       "sources": [
@@ -733,6 +1395,31 @@
         "Vaelet"
       ],
       "category": "Natural Resources"
+    },
+    "Wooden Chest": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 15,
+        "Stone": 5
+      },
+      "techLevel": 2,
+      "category": "Structures"
+    },
+    "Wooden Club": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 5
+      },
+      "techLevel": 1,
+      "category": "Weapons"
+    },
+    "Wooden Structure Set": {
+      "station": "Primitive Workbench",
+      "ingredients": {
+        "Wood": 3
+      },
+      "techLevel": 2,
+      "category": "Structures"
     },
     "Wool": {
       "type": "RAW",
@@ -746,14 +1433,6 @@
         "Kingpaca"
       ],
       "category": "Pal Materials"
-    },
-    "Wooden Club": {
-      "station": "Primitive Workbench",
-      "ingredients": {
-        "Wood": 5
-      },
-      "techLevel": 1,
-      "category": "Weapons"
     }
   }
 }

@@ -7,6 +7,8 @@ import { FavoritesBar } from "@/components/FavoritesBar";
 import { EfficiencyTips } from "@/components/EfficiencyTips";
 import { InventoryPanel } from "@/components/InventoryPanel";
 import { ItemTypeahead } from "@/components/ItemTypeahead";
+import { PrintButton } from "@/components/PrintButton";
+import { ProgressSummary } from "@/components/ProgressSummary";
 import { ResultLine } from "@/components/ResultLine";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -256,7 +258,7 @@ export function RecipeCalculator() {
 
       {result && (
         <>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 print:hidden">
             <Button type="button" variant="outline" size="sm" onClick={() => handleCopy("plain")}>
               {copyStatus === "plain" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               Copy text
@@ -273,7 +275,10 @@ export function RecipeCalculator() {
               {copyStatus === "link" ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
               Copy share link
             </Button>
+            <PrintButton />
           </div>
+
+          <ProgressSummary rawLines={rawLines} craftLines={craftLines} checklist={checklist} />
 
           <EfficiencyTips crafts={result.crafts} />
 

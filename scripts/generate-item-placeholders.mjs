@@ -19,6 +19,7 @@ const catTheme = {
   Ores: { bg: "#94a3b8", fg: "#1e293b", glyph: "O" },
   "Pal Materials": { bg: "#f472b6", fg: "#831843", glyph: "P" },
   Spheres: { bg: "#60a5fa", fg: "#1e3a8a", glyph: "S" },
+  Structures: { bg: "#a3a3a3", fg: "#262626", glyph: "B" },
   Tools: { bg: "#2dd4bf", fg: "#134e4a", glyph: "T" },
   Weapons: { bg: "#f87171", fg: "#7f1d1d", glyph: "W" },
   Other: { bg: "#94a3b8", fg: "#1e293b", glyph: "?" },

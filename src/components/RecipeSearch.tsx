@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getRecipeEntry, getUsedBy, searchRecipes } from "@/lib/recipes";
+import { itemToSlug } from "@/lib/meta";
 import { isRaw } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -85,8 +86,10 @@ export function RecipeSearch({ onSelect, linkToCalculator = true }: RecipeSearch
           }
 
           return (
-            <li key={name} className={cn(rowClass, "cursor-default")}>
-              {inner}
+            <li key={name}>
+              <Link href={`/item/${itemToSlug(name)}`} className={cn(rowClass)}>
+                {inner}
+              </Link>
             </li>
           );
         })}

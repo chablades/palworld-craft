@@ -5,17 +5,20 @@ Next.js + TypeScript website that expands Palworld crafting recipes into raw mat
 ## Features
 
 - **Recipe Calculator** — Select an item + quantity, get raw materials and a bottom-up crafting order
+- **Browse** — Search/filter the full recipe book at `/browse`
 - **Inventory offsets** — Enter amounts you already own; remaining needs update automatically
 - **Search / Filter** — Browse crafted vs raw items
 - **Visual Crafting Tree** — Dependency graph via React Flow (`/tree?item=...`)
 - **Batch Shopping List** — Queue multiple targets and merge costs (persisted in `localStorage`)
 - **Compare** — Side-by-side material costs for two craftables
 - **Per-item pages** — Dedicated recipe pages at `/item/...`
+- **Checklist progress** — Aggregate X-of-Y gathered progress plus print-friendly checklists
 - **Efficiency tips** — Station and workflow hints on calculator and shopping list
 - **Favorites / checklists** — Star items and track shopping progress
-- **Share & copy** — Query-string plan URLs plus plain text / Markdown export
+- **Share & copy** — Query-string plan URLs plus plain text / Markdown / JSON export
 - **Material sources** — Sources and pal-drop hints on raw materials
 - **Game version stamp** — Footer shows which Palworld patch the data targets
+- **PWA** — Installable offline shell (manifest + service worker)
 - **Contribute docs** — CONTRIBUTING.md and `/contribute` for recipe PRs
 - **JSON reader + converter CLI** — Expand the recipe book without touching app code
 
@@ -24,16 +27,23 @@ Next.js + TypeScript website that expands Palworld crafting recipes into raw mat
 - Next.js 15 (App Router) + TypeScript
 - Tailwind CSS v4 + shadcn/ui-style components
 - `@xyflow/react` for the crafting tree
+- `@vercel/analytics` (privacy-light page analytics)
 - Deployable on Vercel
 
 ## Getting started
 
 ```bash
 npm install
+npm run generate-item-placeholders
+npm run generate-pwa-icons
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+## Asset policy
+
+Item icons are original placeholders. Official Palworld art is not redistributed — see [`docs/ASSETS.md`](docs/ASSETS.md).
 
 ## Recipe JSON format
 
@@ -123,10 +133,15 @@ npx vercel
 
 ```
 src/
-  app/                 # Pages (home, calculator, tree, shopping-list)
+  app/                 # Pages (home, browse, calculator, tree, shopping-list, …)
   components/          # Feature UI + shadcn primitives
   data/recipes.json    # Recipe book
   lib/                 # Types, calculator, share/storage helpers, converter
 scripts/
   convert-recipes.ts   # CLI converter
+  expand-recipes.mjs   # Curated batch expansion helper
+  generate-item-placeholders.mjs
+  generate-pwa-icons.mjs
+docs/
+  ASSETS.md            # Icon / trademark policy
 ```

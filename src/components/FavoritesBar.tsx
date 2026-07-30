@@ -22,7 +22,7 @@ export function FavoritesBar({
   if (favorites.length === 0 && recent.length === 0) return null;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 print:hidden">
       {favorites.length > 0 && (
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
