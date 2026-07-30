@@ -4,6 +4,7 @@ All notable updates to Palcraft are listed here. Newest entries first.
 
 ## 2026-07-30
 
+- Add AGENTS.md with Cursor Cloud specific setup and run instructions
 - Expand recipe book across armor, weapons, spheres, structures, food, ammo, and tools
 - Fill remaining raw-material pal-drop metadata
 - Add Browse page wiring RecipeSearch into site navigation
