@@ -7,7 +7,8 @@ export default function HomePage() {
       <div>
         <h1 className="font-display text-3xl tracking-tight">Calculator</h1>
         <p className="text-muted-foreground">
-          Expand a single recipe into sorted raw materials and crafting steps.
+          Search an item to see the materials you need — nested under each material when it requires
+          more crafts.
         </p>
       </div>
       <Suspense fallback={<p className="text-sm text-muted-foreground">Loading calculator…</p>}>
