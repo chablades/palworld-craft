@@ -72,6 +72,37 @@ export function searchRecipes(
   return names.filter((name) => name.toLowerCase().includes(q));
 }
 
+/** Higher is better. Returns -1 when there is no useful match. */
+function scoreItemMatch(query: string, name: string): number {
+  const q = query.trim().toLowerCase();
+  const n = name.toLowerCase();
+  if (!q) return 0;
+  if (n === q) return 1000;
+  if (n.startsWith(q)) return 800 - Math.min(n.length, 100);
+  const words = n.split(/\s+/);
+  if (words.some((word) => word.startsWith(q))) return 600 - Math.min(n.length, 100);
+  const idx = n.indexOf(q);
+  if (idx >= 0) return 400 - idx - Math.min(n.length, 100);
+  return -1;
+}
+
+/** Closest item name for a typed query, or null when nothing matches. */
+export function findClosestItem(query: string, names: string[]): string | null {
+  const q = query.trim();
+  if (!q || names.length === 0) return null;
+
+  let best: string | null = null;
+  let bestScore = -1;
+  for (const name of names) {
+    const score = scoreItemMatch(q, name);
+    if (score > bestScore) {
+      bestScore = score;
+      best = name;
+    }
+  }
+  return bestScore >= 0 ? best : null;
+}
+
 function addCounts(target: Record<string, number>, key: string, amount: number) {
   target[key] = (target[key] ?? 0) + amount;
 }
