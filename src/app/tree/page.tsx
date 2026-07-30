@@ -7,7 +7,7 @@ export default function TreePage() {
       <div>
         <h1 className="font-display text-3xl tracking-tight">Crafting Tree</h1>
         <p className="text-muted-foreground">
-          Inspect the full ingredient dependency graph for any craftable item.
+          Look up an item to see it as the parent node, with required ingredients as children below.
         </p>
       </div>
       <Suspense fallback={<p className="text-sm text-muted-foreground">Loading tree…</p>}>

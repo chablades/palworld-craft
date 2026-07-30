@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Anvil, Columns2, GitFork, ListChecks, Moon, Search, Sun } from "lucide-react";
+import { Anvil, GitFork, Moon, Sun, Warehouse } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { useElementTheme } from "@/components/ThemeProvider";
@@ -19,10 +19,8 @@ import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/", label: "Calculator", icon: Anvil },
-  { href: "/browse", label: "Browse", icon: Search },
-  { href: "/compare", label: "Compare", icon: Columns2 },
+  { href: "/storage", label: "Storage", icon: Warehouse },
   { href: "/tree", label: "Crafting Tree", icon: GitFork },
-  { href: "/shopping-list", label: "Shopping List", icon: ListChecks },
 ];
 
 export function SiteHeader() {

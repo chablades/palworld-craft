@@ -4,23 +4,19 @@ Next.js + TypeScript website that expands Palworld crafting recipes into raw mat
 
 ## Features
 
-- **Recipe Calculator** — Select an item + quantity, get raw materials and a bottom-up crafting order
-- **Browse** — Search/filter the full recipe book at `/browse`
-- **Inventory offsets** — Enter amounts you already own; remaining needs update automatically
-- **Search / Filter** — Browse crafted vs raw items
-- **Visual Crafting Tree** — Dependency graph via React Flow (`/tree?item=...`)
-- **Batch Shopping List** — Queue multiple targets and merge costs (persisted in `localStorage`)
-- **Compare** — Side-by-side material costs for two craftables
+- **Recipe Calculator** — Main page: pick an item + quantity and see full ingredient needs (raws + crafts)
+- **Storage** — Separate tab to log owned Pal materials / raws (`/storage`); does not alter calculator totals
+- **Crafting Tree** — Looked-up item is the parent node; ingredients fan out as children (`/tree?item=...`)
 - **Per-item pages** — Dedicated recipe pages at `/item/...`
-- **Checklist progress** — Aggregate X-of-Y gathered progress plus print-friendly checklists
-- **Efficiency tips** — Station and workflow hints on calculator and shopping list
-- **Favorites / checklists** — Star items and track shopping progress
+- **Favorites / checklists** — Star items and check off gathering progress
 - **Share & copy** — Query-string plan URLs plus plain text / Markdown / JSON export
 - **Material sources** — Sources and pal-drop hints on raw materials
 - **Game version stamp** — Footer shows Palworld **1.0** (the release line this book targets)
 - **PWA** — Installable offline shell (manifest + service worker)
 - **Contribute docs** — CONTRIBUTING.md and `/contribute` for recipe PRs
 - **JSON reader + converter CLI** — Expand the recipe book without touching app code
+
+Paused for now: Compare and Shopping List (old URLs redirect to the calculator).
 
 ## Agent skills
 
@@ -94,11 +90,10 @@ Richer form (optional metadata):
 
 **Calculator:** `/calculator?item=Thermal%20Core&qty=20&inv=Coal:40,Flame%20Organ:5`
 
-**Shopping list:** `/shopping-list?list=Thermal%20Core:20,Computer:2&inv=Coal:40`
+**Crafting tree:** `/tree?item=AI%20Core&qty=1`
 
-- `item` / `qty` — single calculator target
-- `list` — comma-separated `Name:amount` pairs for the shopping queue
-- `inv` — owned inventory as `Name:amount` pairs (shared across calculator and shopping list via `localStorage`)
+- `item` / `qty` — calculator or tree target
+- Owned materials are tracked on `/storage` (browser `localStorage`), separate from calculator totals
 
 ## Convert recipes to JSON
 
@@ -138,7 +133,7 @@ npx vercel
 
 ```
 src/
-  app/                 # Pages (home, browse, calculator, tree, shopping-list, …)
+  app/                 # Pages (home/calculator, storage, tree, item, …)
   components/          # Feature UI + shadcn primitives
   data/recipes.json    # Recipe book
   lib/                 # Types, calculator, share/storage helpers, converter

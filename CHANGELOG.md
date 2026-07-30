@@ -4,6 +4,9 @@ All notable updates to Palcraft are listed here. Newest entries first.
 
 ## 2026-07-30
 
+- Restructure app around Calculator, Storage, and Crafting Tree; pause Compare and Shopping List
+- Move owned materials to a dedicated Storage tab; calculator always shows full ingredient needs
+- Refine crafting tree layout so the looked-up item is the parent with ingredients as children
 - Fix calculator totals display: always show required amounts, live-update for qty (e.g. 1× AI Core)
 - Lock product focus on Palworld 1.0 (version rule, agent docs, GAME_VERSION stamp)
 - Resolve leftover merge conflict markers in the changelog
