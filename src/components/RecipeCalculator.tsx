@@ -5,10 +5,10 @@ import { Check, Copy, Link2, Star } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FavoritesBar } from "@/components/FavoritesBar";
-import { EfficiencyTips } from "@/components/EfficiencyTips";
 import { ItemTypeahead, type ItemTypeaheadHandle } from "@/components/ItemTypeahead";
+import { MaterialInfoTip } from "@/components/MaterialInfoTip";
+import { MaterialTreeCard } from "@/components/MaterialTreeCard";
 import { PrintButton } from "@/components/PrintButton";
-import { ResultLine } from "@/components/ResultLine";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,9 +17,9 @@ import { Label } from "@/components/ui/label";
 import {
   applyCraftOffsets,
   applyInventoryOffsets,
+  buildCraftingTree,
   calculateRecipe,
   getCraftableNames,
-  getTechInfo,
 } from "@/lib/recipes";
 import {
   buildShareSearchParams,
@@ -29,21 +29,14 @@ import {
   formatResultsPlain,
 } from "@/lib/share";
 import {
-  loadChecklist,
   loadFavorites,
   loadInventory,
   loadRecent,
   pushRecent,
-  saveChecklist,
   toggleFavorite,
-  type ChecklistMap,
 } from "@/lib/storage";
-import type { InventoryMap, OffsetLine } from "@/lib/types";
+import type { InventoryMap, TreeNode } from "@/lib/types";
 import { cn } from "@/lib/utils";
-
-function countShort(lines: OffsetLine[]) {
-  return lines.filter((line) => line.owned < line.required).length;
-}
 
 export function RecipeCalculator() {
   const searchParams = useSearchParams();
@@ -63,14 +56,11 @@ export function RecipeCalculator() {
   const [inventory, setInventory] = useState<InventoryMap>({});
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recent, setRecent] = useState<string[]>([]);
-  const [checklist, setChecklist] = useState<ChecklistMap>({});
   const [hydrated, setHydrated] = useState(false);
   const [copyStatus, setCopyStatus] = useState<"idle" | "plain" | "md" | "json" | "link">("idle");
   const itemTypeaheadRef = useRef<ItemTypeaheadHandle>(null);
 
   const qty = Math.max(1, Number.isFinite(amount) ? Math.floor(amount) : 1);
-  const planKey = `${item}:${qty}`;
-  const tech = getTechInfo(item);
   const isFavorite = favorites.includes(item);
 
   const refreshStorage = useCallback(() => {
@@ -85,6 +75,7 @@ export function RecipeCalculator() {
   }, [refreshStorage]);
 
   useEffect(() => {
+    if (!hydrated) return;
     const onFocus = () => refreshStorage();
     const onStorage = (event: StorageEvent) => {
       if (event.key === "palcraft:inventory" || event.key === null) refreshStorage();
@@ -95,17 +86,29 @@ export function RecipeCalculator() {
       window.removeEventListener("focus", onFocus);
       window.removeEventListener("storage", onStorage);
     };
-  }, [refreshStorage]);
+  }, [hydrated, refreshStorage]);
 
+  // Keep the share URL in sync without a Calculate button.
   useEffect(() => {
-    if (!hydrated) return;
-    setChecklist(loadChecklist(planKey));
-  }, [planKey, hydrated]);
+    if (!hydrated || !item || !craftables.includes(item)) return;
+    const params = buildShareSearchParams({ item, qty });
+    const next = `${pathname}?${params.toString()}`;
+    const current = `${pathname}${window.location.search}`;
+    if (next !== current) {
+      router.replace(next, { scroll: false });
+    }
+  }, [hydrated, item, qty, craftables, pathname, router]);
 
-  useEffect(() => {
-    if (!hydrated) return;
-    saveChecklist(planKey, checklist);
-  }, [checklist, planKey, hydrated]);
+  const tree = useMemo((): TreeNode | null => {
+    if (!item || !craftables.includes(item)) return null;
+    try {
+      return buildCraftingTree(item, qty);
+    } catch {
+      return null;
+    }
+  }, [item, qty, craftables]);
+
+  const materials = tree?.children ?? [];
 
   const result = useMemo(() => {
     if (!item || !craftables.includes(item)) return null;
@@ -116,7 +119,6 @@ export function RecipeCalculator() {
     }
   }, [item, qty, craftables]);
 
-  // Need = full calculated requirement. Have = Storage stock (comparison only).
   const rawLines = useMemo(
     () => (result ? applyInventoryOffsets(result.raws, inventory) : []),
     [result, inventory],
@@ -126,24 +128,10 @@ export function RecipeCalculator() {
     [result, inventory],
   );
 
-  const rawShort = countShort(rawLines);
-  const craftShort = countShort(craftLines);
-
-  function syncUrl(nextItem: string, nextQty: number) {
-    const params = buildShareSearchParams({
-      item: nextItem,
-      qty: nextQty,
-    });
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-  }
-
-  function submitPlan(nextItem: string, nextQty: number) {
-    const nextAmount = Math.max(1, nextQty);
+  function selectItem(nextItem: string) {
     setItem(nextItem);
-    setAmount(nextAmount);
     setRecent(pushRecent(nextItem));
     refreshStorage();
-    syncUrl(nextItem, nextAmount);
   }
 
   async function handleCopy(format: "plain" | "md" | "json") {
@@ -167,7 +155,6 @@ export function RecipeCalculator() {
   }
 
   async function handleCopyLink() {
-    syncUrl(item, qty);
     const params = buildShareSearchParams({ item, qty });
     const url = `${window.location.origin}${pathname}?${params.toString()}`;
     const ok = await copyText(url);
@@ -183,14 +170,14 @@ export function RecipeCalculator() {
         <CardHeader>
           <CardTitle>Recipe Calculator</CardTitle>
           <CardDescription>
-            Pick an item and quantity. We calculate the total materials you need. Each line shows{" "}
-            <span className="font-medium text-foreground">need / have</span> from your{" "}
+            Search an item and quantity — materials update live. Click{" "}
+            <span className="font-medium text-foreground">Show recipe</span> to expand crafts under
+            a material. Use (?) for station, unlock, and source details.{" "}
+            <span className="font-medium text-foreground">need / have</span> comes from{" "}
             <Link href="/storage" className="underline-offset-2 hover:underline">
               Storage
             </Link>
-            {" — "}
-            <span className="text-red-600 dark:text-red-400">red</span> if short,{" "}
-            <span className="text-emerald-600 dark:text-emerald-400">green</span> if you have enough.
+            .
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -198,21 +185,16 @@ export function RecipeCalculator() {
             favorites={favorites.filter((name) => craftables.includes(name))}
             recent={recent.filter((name) => craftables.includes(name))}
             selected={item}
-            onSelect={(name) => submitPlan(name, amount)}
+            onSelect={selectItem}
             onToggleFavorite={(name) => setFavorites(toggleFavorite(name))}
           />
 
-          <form
-            className="grid gap-4 sm:grid-cols-[1fr_120px_auto_auto] sm:items-end"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const resolved = itemTypeaheadRef.current?.resolve() ?? item;
-              if (!resolved) return;
-              submitPlan(resolved, amount);
-            }}
-          >
+          <div className="grid gap-4 sm:grid-cols-[1fr_120px_auto] sm:items-end">
             <div className="space-y-2">
-              <Label htmlFor="item">Item</Label>
+              <Label htmlFor="item" className="inline-flex items-center gap-1.5">
+                Search item
+                {item && <MaterialInfoTip name={item} isRaw={false} />}
+              </Label>
               <ItemTypeahead
                 ref={itemTypeaheadRef}
                 id="item"
@@ -222,15 +204,9 @@ export function RecipeCalculator() {
                   setItem(name);
                   refreshStorage();
                 }}
-                onEnterCommit={(name) => submitPlan(name, amount)}
-                placeholder="Type a craftable item…"
+                onEnterCommit={(name) => selectItem(name)}
+                placeholder="Search for an item…"
               />
-              {tech?.techLevel !== undefined && (
-                <p className="text-xs text-muted-foreground">
-                  Unlock: {tech.techType === "ancient" ? "Ancient Tech" : "Tech"} Lv{" "}
-                  {tech.techLevel}
-                </p>
-              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="amount">Quantity</Label>
@@ -254,151 +230,74 @@ export function RecipeCalculator() {
             >
               <Star className={cn("h-4 w-4", isFavorite && "fill-current text-amber-500")} />
             </Button>
-            <Button type="submit">Calculate</Button>
-          </form>
-
-          {result && (
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-              <p>
-                Total materials for{" "}
-                <span className="font-medium text-foreground">
-                  {qty}× {item}
-                </span>
-              </p>
-              <p className="text-muted-foreground">
-                Raws:{" "}
-                <span
-                  className={cn(
-                    "font-medium",
-                    rawShort === 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400",
-                  )}
-                >
-                  {rawLines.length - rawShort}/{rawLines.length} covered
-                </span>
-                {" · "}
-                Crafts:{" "}
-                <span
-                  className={cn(
-                    "font-medium",
-                    craftShort === 0
-                      ? "text-emerald-600 dark:text-emerald-400"
-                      : "text-red-600 dark:text-red-400",
-                  )}
-                >
-                  {craftLines.length - craftShort}/{craftLines.length} covered
-                </span>
-              </p>
-            </div>
-          )}
+          </div>
         </CardContent>
       </Card>
 
-      {result && (
-        <>
-          <div className="flex flex-wrap gap-2 print:hidden">
-            <Button type="button" variant="outline" size="sm" onClick={() => handleCopy("plain")}>
-              {copyStatus === "plain" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              Copy text
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={() => handleCopy("md")}>
-              {copyStatus === "md" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              Copy Markdown
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={() => handleCopy("json")}>
-              {copyStatus === "json" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              Copy JSON
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={handleCopyLink}>
-              {copyStatus === "link" ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
-              Copy share link
-            </Button>
-            <PrintButton />
-            <Button type="button" variant="secondary" size="sm" asChild>
-              <Link href={`/tree?item=${encodeURIComponent(item)}&qty=${qty}`}>
-                Open crafting tree
-              </Link>
-            </Button>
-            <Button type="button" variant="ghost" size="sm" asChild>
-              <Link href="/storage">Edit storage</Link>
-            </Button>
-          </div>
+      {tree && (
+        <Card className="print:break-inside-avoid">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex flex-wrap items-center gap-2">
+              Materials for {qty}× {item}
+              <Badge variant="crafted">{materials.length}</Badge>
+            </CardTitle>
+            <CardDescription>
+              Direct ingredients in each square. Expand a craftable material to reveal its recipe
+              underneath.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap gap-2 print:hidden">
+              <Button type="button" variant="outline" size="sm" onClick={() => handleCopy("plain")}>
+                {copyStatus === "plain" ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+                Copy text
+              </Button>
+              <Button type="button" variant="outline" size="sm" onClick={() => handleCopy("md")}>
+                {copyStatus === "md" ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                Copy Markdown
+              </Button>
+              <Button type="button" variant="outline" size="sm" onClick={() => handleCopy("json")}>
+                {copyStatus === "json" ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+                Copy JSON
+              </Button>
+              <Button type="button" variant="outline" size="sm" onClick={handleCopyLink}>
+                {copyStatus === "link" ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Link2 className="h-4 w-4" />
+                )}
+                Copy share link
+              </Button>
+              <PrintButton />
+              <Button type="button" variant="secondary" size="sm" asChild>
+                <Link href={`/tree?item=${encodeURIComponent(item)}&qty=${qty}`}>
+                  Open crafting tree
+                </Link>
+              </Button>
+              <Button type="button" variant="ghost" size="sm" asChild>
+                <Link href="/storage">Edit storage</Link>
+              </Button>
+            </div>
 
-          <EfficiencyTips crafts={result.crafts} />
-
-          <div className="grid gap-4 md:grid-cols-2 print:grid-cols-1">
-            <Card className="print:break-inside-avoid">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  Raw Materials
-                  <Badge variant="raw">{rawLines.length}</Badge>
-                </CardTitle>
-                <CardDescription>
-                  Calculated need for {qty}× {item}. Right side is need / have from Storage.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {rawLines.map((line) => (
-                    <ResultLine
-                      key={line.name}
-                      line={line}
-                      showMeta
-                      showUsedBy
-                      showNeedHave
-                      checked={Boolean(checklist[`raw:${line.name}`])}
-                      onCheckedChange={(checked) =>
-                        setChecklist((prev) => ({
-                          ...prev,
-                          [`raw:${line.name}`]: checked,
-                        }))
-                      }
-                    />
-                  ))}
-                  {rawLines.length === 0 && (
-                    <li className="text-sm text-muted-foreground">No raw materials.</li>
-                  )}
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="print:break-inside-avoid">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  Crafting Order
-                  <Badge variant="crafted">{craftLines.length}</Badge>
-                </CardTitle>
-                <CardDescription>
-                  Bottom-up crafts for {qty}× {item}. need / have uses Storage if you stock
-                  intermediates too.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {craftLines.map((line, index) => (
-                    <ResultLine
-                      key={line.name}
-                      line={line}
-                      showStation
-                      showTech
-                      showNeedHave
-                      step={index + 1}
-                      checked={Boolean(checklist[`craft:${line.name}`])}
-                      onCheckedChange={(checked) =>
-                        setChecklist((prev) => ({
-                          ...prev,
-                          [`craft:${line.name}`]: checked,
-                        }))
-                      }
-                    />
-                  ))}
-                  {craftLines.length === 0 && (
-                    <li className="text-sm text-muted-foreground">No crafts required.</li>
-                  )}
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        </>
+            {materials.length > 0 ? (
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {materials.map((node) => (
+                  <MaterialTreeCard key={node.id} node={node} inventory={inventory} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No materials required.</p>
+            )}
+          </CardContent>
+        </Card>
       )}
     </div>
   );

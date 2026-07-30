@@ -4,7 +4,7 @@ Next.js + TypeScript website that expands Palworld crafting recipes into raw mat
 
 ## Features
 
-- **Recipe Calculator** — Main page: pick an item + quantity and see full ingredient needs (raws + crafts)
+- **Recipe Calculator** — Main page: pick an item + quantity; materials nest underneath when they require more crafts (need/have vs Storage)
 - **Storage** — Separate tab to log owned Pal materials / raws (`/storage`); does not alter calculator totals
 - **Crafting Tree** — Looked-up item is the parent node; ingredients fan out as children (`/tree?item=...`)
 - **Per-item pages** — Dedicated recipe pages at `/item/...`

@@ -4,6 +4,11 @@ All notable updates to Palcraft are listed here. Newest entries first.
 
 ## 2026-07-30
 
+- Tighten material need/have spacing and use a 3-column calculator grid on desktop
+- Expand calculator craft recipes with a clickable show/hide bar under each material
+- Compact calculator materials: indented craft tree, (?) info tip, remove Calculate button
+- Rebuild calculator as a nested material hierarchy (ingredients with sub-materials underneath)
+- Remove Efficiency Tips and separate Raw Materials panel from the calculator
 - Calculator shows need/have per material (red if Storage is short, green if enough)
 - Restructure app around Calculator, Storage, and Crafting Tree; pause Compare and Shopping List
 - Move owned materials to a dedicated Storage tab; calculator always shows full ingredient needs
