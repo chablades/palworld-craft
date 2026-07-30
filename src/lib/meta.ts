@@ -1,5 +1,5 @@
 /** Stamp shown in UI so players know which game data patch recipes target. */
-export const GAME_VERSION = "0.4.x";
+export const GAME_VERSION = "1.0.2";
 export const GAME_VERSION_LABEL = `Palworld ${GAME_VERSION}`;
 export const DATA_NOTE =
   "Recipe quantities are community-maintained approximations and may differ slightly from the live game.";

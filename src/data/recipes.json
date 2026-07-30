@@ -1,14 +1,14 @@
 {
   "recipes": {
     "AI Core": {
-      "station": "Production Assembly Line II",
+      "station": "Advanced Workshop",
       "ingredients": {
         "Computer": 5,
-        "Solarite Ingot": 10,
+        "Soralite Ingot": 10,
         "Thermal Core": 2,
         "Ancient Civilization Core": 1
       },
-      "techLevel": 42,
+      "techLevel": 67,
       "techType": "ancient",
       "category": "Ancient"
     },
@@ -109,13 +109,13 @@
       "category": "Food"
     },
     "Bio Battery": {
-      "station": "Production Assembly Line",
+      "station": "Production Assembly Line II",
       "ingredients": {
         "Electric Organ": 1,
         "Refined Ingot": 1,
         "Carbon Fiber": 1
       },
-      "techLevel": 22,
+      "techLevel": 44,
       "category": "Components"
     },
     "Bone": {
@@ -153,7 +153,7 @@
         "Coal": 2,
         "Flame Organ": 1
       },
-      "techLevel": 18,
+      "techLevel": 35,
       "category": "Components"
     },
     "Cement": {
@@ -174,13 +174,25 @@
       "techLevel": 2,
       "category": "Components"
     },
+    "Chromite": {
+      "type": "RAW",
+      "sources": [
+        "Mining",
+        "Feybreak Island"
+      ],
+      "drops": [
+        "Necromus",
+        "Paladius"
+      ],
+      "category": "Ores"
+    },
     "Circuit Board": {
       "station": "Production Assembly Line",
       "ingredients": {
         "Pure Quartz": 2,
         "Polymer": 1
       },
-      "techLevel": 20,
+      "techLevel": 35,
       "category": "Components"
     },
     "Cloth": {
@@ -270,7 +282,7 @@
         "Bio Battery": 2,
         "Carbon Fiber": 2
       },
-      "techLevel": 28,
+      "techLevel": 50,
       "category": "Components"
     },
     "Cooking Pot": {
@@ -288,7 +300,7 @@
         "Venom Gland": 1,
         "Sulfur": 1
       },
-      "techLevel": 20,
+      "techLevel": 37,
       "category": "Components"
     },
     "Crossbow": {
@@ -369,15 +381,14 @@
       "category": "Pal Materials"
     },
     "Exotic Sphere": {
-      "station": "Sphere Assembly Line II",
+      "station": "Advanced Sphere Assembly Line",
       "ingredients": {
         "Paldium Fragment": 15,
-        "Pal Metal Ingot": 8,
-        "Carbon Fiber": 5,
-        "Cement": 8
+        "Plasteel": 1,
+        "Hardwood": 10,
+        "Hexolite": 1
       },
-      "techLevel": 45,
-      "techType": "ancient",
+      "techLevel": 58,
       "category": "Spheres"
     },
     "Explosive Arrow": {
@@ -474,8 +485,8 @@
       "ingredients": {
         "Paldium Fragment": 2,
         "Ingot": 2,
-        "Wood": 7,
-        "Stone": 7
+        "Wood": 5,
+        "Stone": 5
       },
       "techLevel": 20,
       "category": "Spheres"
@@ -515,6 +526,19 @@
       "techLevel": 14,
       "category": "Ammo"
     },
+    "Hardwood": {
+      "type": "RAW",
+      "sources": [
+        "Old-growth trees",
+        "Logging Site"
+      ],
+      "drops": [
+        "Tanzee",
+        "Vaelet",
+        "Wumpo"
+      ],
+      "category": "Natural Resources"
+    },
     "Heat Resistant Metal Armor": {
       "station": "High Quality Workbench",
       "ingredients": {
@@ -544,16 +568,26 @@
       "category": "Armor"
     },
     "Hexolite": {
+      "station": "Gigantic Furnace",
+      "ingredients": {
+        "Chromite": 1,
+        "Hexolite Quartz": 1
+      },
+      "techLevel": 58,
+      "category": "Ingots"
+    },
+    "Hexolite Quartz": {
       "type": "RAW",
       "sources": [
         "Feybreak Island",
         "Mining"
       ],
-      "category": "Ingots",
       "drops": [
-        "Xenovader",
-        "Selyne"
-      ]
+        "Necromus",
+        "Paladius",
+        "Neptilius"
+      ],
+      "category": "Ores"
     },
     "High Quality Cloth": {
       "station": "Production Assembly Line",
@@ -614,10 +648,10 @@
       "ingredients": {
         "Paldium Fragment": 3,
         "Ingot": 3,
-        "Wood": 10,
-        "Cement": 2
+        "Wood": 8,
+        "Stone": 8
       },
-      "techLevel": 33,
+      "techLevel": 27,
       "category": "Spheres"
     },
     "Ice Organ": {
@@ -677,13 +711,12 @@
     "Legendary Sphere": {
       "station": "Sphere Assembly Line II",
       "ingredients": {
-        "Paldium Fragment": 10,
-        "Pal Metal Ingot": 5,
-        "Carbon Fiber": 3,
-        "Cement": 5
+        "Paldium Fragment": 5,
+        "Pal Metal Ingot": 3,
+        "Hardwood": 3,
+        "Stone": 20
       },
-      "techLevel": 35,
-      "techType": "ancient",
+      "techLevel": 44,
       "category": "Spheres"
     },
     "Lettuce": {
@@ -736,10 +769,10 @@
       "ingredients": {
         "Paldium Fragment": 1,
         "Ingot": 1,
-        "Wood": 5,
-        "Stone": 5
+        "Wood": 3,
+        "Stone": 3
       },
-      "techLevel": 13,
+      "techLevel": 14,
       "category": "Spheres"
     },
     "Metal Armor": {
@@ -914,18 +947,17 @@
     "Pal Metal Ingot": {
       "station": "Electric Furnace",
       "ingredients": {
-        "Refined Ingot": 4,
+        "Ore": 4,
+        "Pure Quartz": 1,
         "Paldium Fragment": 2
       },
-      "techLevel": 24,
+      "techLevel": 44,
       "category": "Ingots"
     },
     "Pal Sphere": {
-      "station": "Sphere Workbench",
+      "station": "Primitive Workbench",
       "ingredients": {
-        "Paldium Fragment": 1,
-        "Wood": 3,
-        "Stone": 3
+        "Paldium Fragment": 1
       },
       "techLevel": 2,
       "category": "Spheres"
@@ -972,13 +1004,12 @@
       "category": "Armor"
     },
     "Plasteel": {
-      "station": "Production Assembly Line II",
+      "station": "Electric Furnace",
       "ingredients": {
-        "Crude Oil": 5,
-        "Paldium Fragment": 5,
-        "Ore": 10
+        "Crude Oil": 2,
+        "Ore": 5
       },
-      "techLevel": 30,
+      "techLevel": 50,
       "category": "Ingots"
     },
     "Poison Arrow": {
@@ -997,7 +1028,7 @@
         "High Quality Pal Oil": 2,
         "Sulfur": 1
       },
-      "techLevel": 12,
+      "techLevel": 33,
       "category": "Components"
     },
     "Primitive Furnace": {
@@ -1182,17 +1213,37 @@
       "techLevel": 2,
       "category": "Components"
     },
-    "Solarite Ingot": {
+    "Sol Sphere": {
+      "station": "Ancient Workbench",
+      "ingredients": {
+        "Paldium Fragment": 30,
+        "Soralite Ingot": 2,
+        "Hardwood": 10
+      },
+      "techLevel": 67,
+      "techType": "ancient",
+      "category": "Spheres"
+    },
+    "Soralite": {
       "type": "RAW",
       "sources": [
-        "Feybreak Island",
-        "Solarite nodes"
+        "Sunreach Island",
+        "Ancient mines"
       ],
-      "category": "Ingots",
       "drops": [
         "Xenovader",
         "Silvegis"
-      ]
+      ],
+      "category": "Ores"
+    },
+    "Soralite Ingot": {
+      "station": "Ancient Furnace",
+      "ingredients": {
+        "Soralite": 2,
+        "Pure Quartz": 2
+      },
+      "techLevel": 66,
+      "category": "Ingots"
     },
     "Sphere Workbench": {
       "station": "High Quality Workbench",
@@ -1292,7 +1343,7 @@
         "Corrosive Solvent": 2,
         "Hexolite": 2
       },
-      "techLevel": 38,
+      "techLevel": 59,
       "techType": "ancient",
       "category": "Ancient"
     },
@@ -1328,24 +1379,23 @@
     "Ultimate Sphere": {
       "station": "Sphere Assembly Line II",
       "ingredients": {
-        "Paldium Fragment": 20,
-        "Pal Metal Ingot": 10,
-        "Carbon Fiber": 8,
-        "Cement": 10
+        "Paldium Fragment": 10,
+        "Pal Metal Ingot": 5,
+        "Hardwood": 10,
+        "Plasteel": 1
       },
-      "techLevel": 48,
-      "techType": "ancient",
+      "techLevel": 51,
       "category": "Spheres"
     },
     "Ultra Sphere": {
       "station": "Sphere Assembly Line II",
       "ingredients": {
         "Paldium Fragment": 5,
-        "Refined Ingot": 5,
-        "Carbon Fiber": 2,
-        "Cement": 3
+        "Refined Ingot": 3,
+        "Wood": 10,
+        "Stone": 10
       },
-      "techLevel": 27,
+      "techLevel": 35,
       "category": "Spheres"
     },
     "Venom Gland": {

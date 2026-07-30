@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Copy, Link2, Star } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FavoritesBar } from "@/components/FavoritesBar";
 import { EfficiencyTips } from "@/components/EfficiencyTips";
 import { InventoryPanel } from "@/components/InventoryPanel";
-import { ItemTypeahead } from "@/components/ItemTypeahead";
+import { ItemTypeahead, type ItemTypeaheadHandle } from "@/components/ItemTypeahead";
 import { PrintButton } from "@/components/PrintButton";
 import { ProgressSummary } from "@/components/ProgressSummary";
 import { ResultLine } from "@/components/ResultLine";
@@ -67,6 +67,7 @@ export function RecipeCalculator() {
   const [checklist, setChecklist] = useState<ChecklistMap>({});
   const [hydrated, setHydrated] = useState(false);
   const [copyStatus, setCopyStatus] = useState<"idle" | "plain" | "md" | "json" | "link">("idle");
+  const itemTypeaheadRef = useRef<ItemTypeaheadHandle>(null);
 
   const planKey = `${submitted.item}:${submitted.amount}`;
   const tech = getTechInfo(item);
@@ -205,16 +206,20 @@ export function RecipeCalculator() {
             className="grid gap-4 sm:grid-cols-[1fr_120px_auto_auto] sm:items-end"
             onSubmit={(e) => {
               e.preventDefault();
-              submitPlan(item, amount);
+              const resolved = itemTypeaheadRef.current?.resolve() ?? item;
+              if (!resolved) return;
+              submitPlan(resolved, amount);
             }}
           >
             <div className="space-y-2">
               <Label htmlFor="item">Item</Label>
               <ItemTypeahead
+                ref={itemTypeaheadRef}
                 id="item"
                 value={item}
                 options={craftables}
                 onValueChange={setItem}
+                onEnterCommit={(name) => submitPlan(name, amount)}
                 placeholder="Type a craftable item…"
               />
               {tech?.techLevel !== undefined && (

@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Copy, Link2, Plus, Trash2 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { EfficiencyTips } from "@/components/EfficiencyTips";
 import { InventoryPanel } from "@/components/InventoryPanel";
 import { ItemIcon } from "@/components/ItemIcon";
-import { ItemTypeahead } from "@/components/ItemTypeahead";
+import { ItemTypeahead, type ItemTypeaheadHandle } from "@/components/ItemTypeahead";
 import { PrintButton } from "@/components/PrintButton";
 import { ProgressSummary } from "@/components/ProgressSummary";
 import { ResultLine } from "@/components/ResultLine";
@@ -62,6 +62,7 @@ export function ShoppingList() {
   const [checklist, setChecklist] = useState<ChecklistMap>({});
   const [hydrated, setHydrated] = useState(false);
   const [copyStatus, setCopyStatus] = useState<"idle" | "plain" | "md" | "json" | "link">("idle");
+  const draftTypeaheadRef = useRef<ItemTypeaheadHandle>(null);
 
   const planKey = useMemo(
     () =>
@@ -131,16 +132,18 @@ export function ShoppingList() {
     });
   }
 
-  function addItem() {
-    if (!draftName || draftAmount <= 0) return;
+  function addItem(name = draftName, amount = draftAmount) {
+    const resolved = name || draftTypeaheadRef.current?.resolve() || draftName;
+    if (!resolved || amount <= 0) return;
+    setDraftName(resolved);
     setItems((prev) => {
-      const existing = prev.find((p) => p.name === draftName);
+      const existing = prev.find((p) => p.name === resolved);
       if (existing) {
         return prev.map((p) =>
-          p.name === draftName ? { ...p, amount: p.amount + draftAmount } : p,
+          p.name === resolved ? { ...p, amount: p.amount + amount } : p,
         );
       }
-      return [...prev, { name: draftName, amount: draftAmount }];
+      return [...prev, { name: resolved, amount }];
     });
   }
 
@@ -207,10 +210,12 @@ export function ShoppingList() {
             <div className="space-y-2">
               <Label htmlFor="shop-item">Add item</Label>
               <ItemTypeahead
+                ref={draftTypeaheadRef}
                 id="shop-item"
                 value={draftName}
                 options={craftables}
                 onValueChange={setDraftName}
+                onEnterCommit={(name) => addItem(name, draftAmount)}
                 placeholder="Type a craftable item…"
               />
             </div>
@@ -224,7 +229,13 @@ export function ShoppingList() {
                 onChange={(e) => setDraftAmount(Number(e.target.value) || 1)}
               />
             </div>
-            <Button type="button" onClick={addItem}>
+            <Button
+              type="button"
+              onClick={() => {
+                const resolved = draftTypeaheadRef.current?.resolve() ?? draftName;
+                addItem(resolved, draftAmount);
+              }}
+            >
               <Plus className="h-4 w-4" />
               Add
             </Button>

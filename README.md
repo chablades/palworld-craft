@@ -22,6 +22,11 @@ Next.js + TypeScript website that expands Palworld crafting recipes into raw mat
 - **Contribute docs** — CONTRIBUTING.md and `/contribute` for recipe PRs
 - **JSON reader + converter CLI** — Expand the recipe book without touching app code
 
+## Agent skills
+
+- [`.cursor/skills/palworld-recipe-data`](.cursor/skills/palworld-recipe-data/SKILL.md) — deep-dive / verify recipe accuracy against paldb.cc
+- Brief: [`docs/agents/palworld-recipe-deep-dive.md`](docs/agents/palworld-recipe-deep-dive.md)
+
 ## Stack
 
 - Next.js 15 (App Router) + TypeScript
