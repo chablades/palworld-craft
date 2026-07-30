@@ -1,6 +1,6 @@
 # Palcraft — Palworld Recipe Calculator
 
-Next.js + TypeScript website that expands Palworld crafting recipes into raw materials and intermediate crafts. Recipes live in JSON for easy expansion.
+Next.js + TypeScript website that expands Palworld crafting recipes into raw materials and intermediate crafts. Recipes live in JSON for easy expansion. **Data targets Palworld 1.0.**
 
 ## Features
 
@@ -17,7 +17,7 @@ Next.js + TypeScript website that expands Palworld crafting recipes into raw mat
 - **Favorites / checklists** — Star items and track shopping progress
 - **Share & copy** — Query-string plan URLs plus plain text / Markdown / JSON export
 - **Material sources** — Sources and pal-drop hints on raw materials
-- **Game version stamp** — Footer shows which Palworld patch the data targets
+- **Game version stamp** — Footer shows Palworld **1.0** (the release line this book targets)
 - **PWA** — Installable offline shell (manifest + service worker)
 - **Contribute docs** — CONTRIBUTING.md and `/contribute` for recipe PRs
 - **JSON reader + converter CLI** — Expand the recipe book without touching app code
