@@ -10,8 +10,12 @@ Palcraft is a single Next.js 15 (App Router) + TypeScript app — a static Palwo
 
 Standard commands live in `package.json` (`dev`, `build`, `start`, `lint`). Run the dev server with `npm run dev` (serves `http://localhost:3000`).
 
+Primary nav: **Calculator** (`/`), **Storage** (`/storage`), **Crafting Tree** (`/tree`). Compare and Shopping List are paused (those routes redirect home).
+
 Non-obvious notes:
-- `/calculator` responds with a 307 redirect (to `/` with query params); this is expected, not an error. Test the calculator on `/` or via a shareable URL like `/calculator?item=Thermal%20Core&qty=20`.
+- `/calculator` responds with a 307 redirect (to `/` with query params); this is expected, not an error. Test the calculator on `/` or via a shareable URL like `/?item=AI%20Core&qty=1`.
+- The calculator always shows **full required ingredients** — it does not subtract Storage. Owned materials are edited only on `/storage`.
+- Crafting tree: the looked-up item is the **parent** node; ingredients are **children** below it.
 - The generated placeholder assets in `public/items/` and PWA icons in `public/icons/` are already committed. Re-running `npm run generate-item-placeholders` / `npm run generate-pwa-icons` is idempotent and typically produces no git diff; only run them if those directories are missing.
 - There are **no automated tests** (no Jest/Vitest/Playwright). Quality gates are `npm run lint` and `npm run build`. `next lint` prints a deprecation warning (removed in Next.js 16) but still works.
-- Shopping list / inventory / favorites persist in browser `localStorage`, so state carries across reloads in the same browser.
+- Storage / favorites / checklists persist in browser `localStorage`, so state carries across reloads in the same browser.
