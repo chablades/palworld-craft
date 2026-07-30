@@ -170,8 +170,8 @@ export function RecipeCalculator() {
         <CardHeader>
           <CardTitle>Recipe Calculator</CardTitle>
           <CardDescription>
-            Search an item and quantity — materials update live. Nested crafts indent under their
-            parent. Use (?) for station, unlock, and source details.{" "}
+            Search an item and quantity — materials update live. Nested crafts use arrows under
+            their parent. Use (?) for station, unlock, and source details.{" "}
             <span className="font-medium text-foreground">need / have</span> comes from{" "}
             <Link href="/storage" className="underline-offset-2 hover:underline">
               Storage
@@ -241,7 +241,7 @@ export function RecipeCalculator() {
               <Badge variant="crafted">{materials.length}</Badge>
             </CardTitle>
             <CardDescription>
-              Direct ingredients in each square. Deeper crafts indent under their parent.
+              Direct ingredients in each square. Deeper crafts nest with arrows under their parent.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

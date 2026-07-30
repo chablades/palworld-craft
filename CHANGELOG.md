@@ -4,6 +4,7 @@ All notable updates to Palcraft are listed here. Newest entries first.
 
 ## 2026-07-30
 
+- Nest calculator craft children with arrows instead of plain indentation
 - Compact calculator materials: indented craft tree, (?) info tip, remove Calculate button
 - Rebuild calculator as a nested material hierarchy (ingredients with sub-materials underneath)
 - Remove Efficiency Tips and separate Raw Materials panel from the calculator

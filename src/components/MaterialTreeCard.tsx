@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { CornerDownRight } from "lucide-react";
 import { ItemIcon } from "@/components/ItemIcon";
 import { MaterialInfoTip } from "@/components/MaterialInfoTip";
 import { itemToSlug } from "@/lib/meta";
@@ -10,6 +11,23 @@ import { cn } from "@/lib/utils";
 interface MaterialTreeCardProps {
   node: TreeNode;
   inventory: InventoryMap;
+}
+
+function DepthArrows({ depth }: { depth: number }) {
+  if (depth <= 0) return null;
+  return (
+    <span
+      className="flex shrink-0 items-center gap-0.5 text-muted-foreground"
+      aria-hidden="true"
+    >
+      {Array.from({ length: depth }, (_, index) => (
+        <CornerDownRight
+          key={index}
+          className={cn("h-3.5 w-3.5", index < depth - 1 && "opacity-35")}
+        />
+      ))}
+    </span>
+  );
 }
 
 function MaterialRow({
@@ -35,8 +53,8 @@ function MaterialRow({
           short && depth === 0 && "bg-red-500/5",
           enough && "bg-emerald-500/5",
         )}
-        style={{ paddingLeft: `${0.5 + depth * 1.15}rem` }}
       >
+        <DepthArrows depth={depth} />
         <ItemIcon name={node.name} size="sm" />
         <Link
           href={`/item/${itemToSlug(node.name)}`}
@@ -68,7 +86,7 @@ function MaterialRow({
   );
 }
 
-/** One top-level material square with indented craft children. */
+/** One top-level material square with arrow-nested craft children. */
 export function MaterialTreeCard({ node, inventory }: MaterialTreeCardProps) {
   return (
     <div className="rounded-lg border border-border/70 bg-card/70 p-2 shadow-sm print:break-inside-avoid">
