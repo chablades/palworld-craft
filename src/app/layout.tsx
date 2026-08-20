@@ -20,7 +20,7 @@ const body = Source_Sans_3({
 
 export const metadata: Metadata = {
   title: "Palcraft | Palworld Recipe Calculator",
-  description: `Calculate raw materials and crafting steps for Palworld recipes (${GAME_VERSION_LABEL}). Search items, explore crafting trees, and build batch shopping lists.`,
+  description: `Calculate raw materials and crafting steps for Palworld recipes (${GAME_VERSION_LABEL}). Search items, explore crafting trees, and track what you already have in Storage.`,
   applicationName: "Palcraft",
   manifest: "/manifest.webmanifest",
   appleWebApp: {

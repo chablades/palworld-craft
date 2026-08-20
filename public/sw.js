@@ -1,6 +1,6 @@
 /* Offline-capable shell for Palcraft. Precaches the app shell; network-first for pages. */
-const CACHE = "palcraft-shell-v1";
-const PRECACHE = ["/", "/browse", "/shopping-list", "/manifest.webmanifest", "/icons/icon-192.png"];
+const CACHE = "palcraft-shell-v2";
+const PRECACHE = ["/", "/storage", "/tree", "/manifest.webmanifest", "/icons/icon-192.png"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -16,6 +16,11 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+/** Redirects and error responses must not be cached — Cache.put() rejects on them. */
+function isCacheable(response) {
+  return response.ok && response.type === "basic" && !response.redirected;
+}
+
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET") return;
@@ -26,8 +31,10 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(request)
       .then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE).then((cache) => cache.put(request, copy));
+        if (isCacheable(response)) {
+          const copy = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
+        }
         return response;
       })
       .catch(() => caches.match(request).then((cached) => cached || caches.match("/"))),

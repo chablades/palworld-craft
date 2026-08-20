@@ -2,6 +2,14 @@
 
 All notable updates to Palcraft are listed here. Newest entries first.
 
+## 2026-08-20
+
+- Fix Crafting Order panel showing every intermediate as short: Storage now tracks crafted items too, not just raws
+- Fix service worker precaching the paused /browse and /shopping-list routes; precache /storage and /tree instead (cache bumped to v2)
+- Stop the service worker caching redirect and error responses, which rejected Cache.put()
+- Remove the dead Compare button on item pages (Compare is paused and redirects home)
+- Drop paused shopping-list wording from the page description and PWA manifest
+
 ## 2026-07-30
 
 - Calculator shows need/have per material (red if Storage is short, green if enough)
