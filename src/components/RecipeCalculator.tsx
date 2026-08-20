@@ -381,6 +381,7 @@ export function RecipeCalculator() {
                       showStation
                       showTech
                       showNeedHave
+                      spare={result.leftovers[line.name]}
                       step={index + 1}
                       checked={Boolean(checklist[`craft:${line.name}`])}
                       onCheckedChange={(checked) =>

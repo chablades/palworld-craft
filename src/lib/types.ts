@@ -12,6 +12,8 @@ export interface RawMaterialDefinition {
 
 export interface RecipeDefinition {
   ingredients: Record<string, number>;
+  /** Units produced by one craft. Omitted means one. Batch recipes (arrows, ammo) produce several per craft. */
+  yield?: number;
   /** Material / item class for grouped browsing (Ores, Pal Materials, Ingots, …). */
   category?: string;
   /** Crafting station where this recipe is made. */
@@ -31,6 +33,8 @@ export interface RecipeBookData {
 export interface CalculationResult {
   raws: Record<string, number>;
   crafts: Record<string, number>;
+  /** Units produced beyond what the plan needs, when a batch recipe overshoots. */
+  leftovers: Record<string, number>;
 }
 
 export interface OffsetLine {
@@ -125,6 +129,14 @@ export function validateRecipeBook(data: unknown): data is RecipeBookData {
       return false;
     }
     if (recipe.station !== undefined && typeof recipe.station !== "string") {
+      return false;
+    }
+    if (
+      recipe.yield !== undefined &&
+      (typeof recipe.yield !== "number" ||
+        !Number.isInteger(recipe.yield) ||
+        recipe.yield < 1)
+    ) {
       return false;
     }
     if (

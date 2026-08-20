@@ -42,6 +42,15 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Tests
+
+```bash
+npm test
+```
+
+Node’s built-in test runner (via `tsx`, no extra dependencies). Covers recipe expansion,
+craft ordering, inventory offsets, and recipe/asset data integrity.
+
 ## Asset policy
 
 Item icons are original placeholders. Official Palworld art is not redistributed — see [`docs/ASSETS.md`](docs/ASSETS.md).
@@ -65,6 +74,10 @@ Objects with an `ingredients` map and optional `station`:
   }
 }
 ```
+
+- `yield` — units produced per craft, for batch recipes like arrows and ammo. Omit it for
+  the usual one-per-craft recipes. Demand is pooled across every consumer before it is split
+  into whole crafts, so a shared batch recipe is rounded up once rather than once per consumer.
 
 ### Raw materials
 
@@ -137,6 +150,7 @@ src/
   components/          # Feature UI + shadcn primitives
   data/recipes.json    # Recipe book
   lib/                 # Types, calculator, share/storage helpers, converter
+tests/                 # node:test suites for calculator logic + data integrity
 scripts/
   convert-recipes.ts   # CLI converter
   expand-recipes.mjs   # Curated batch expansion helper

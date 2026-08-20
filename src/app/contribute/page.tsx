@@ -27,8 +27,13 @@ export default function ContributePage() {
             <li>
               Craftables use <code className="rounded bg-muted px-1 py-0.5 text-xs">ingredients</code>,
               optional <code className="rounded bg-muted px-1 py-0.5 text-xs">station</code>,{" "}
-              <code className="rounded bg-muted px-1 py-0.5 text-xs">techLevel</code>, and{" "}
-              <code className="rounded bg-muted px-1 py-0.5 text-xs">techType</code>.
+              <code className="rounded bg-muted px-1 py-0.5 text-xs">techLevel</code>,{" "}
+              <code className="rounded bg-muted px-1 py-0.5 text-xs">techType</code>, and{" "}
+              <code className="rounded bg-muted px-1 py-0.5 text-xs">yield</code>.
+            </li>
+            <li>
+              Set <code className="rounded bg-muted px-1 py-0.5 text-xs">yield</code> when one craft makes several units (arrows,
+              ammo). Omit it otherwise — recipes without it produce one per craft.
             </li>
             <li>
               Raws use{" "}
