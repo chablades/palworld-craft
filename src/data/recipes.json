@@ -45,6 +45,7 @@
         "Wood": 1,
         "Stone": 1
       },
+      "yield": 10,
       "techLevel": 1,
       "category": "Ammo"
     },
@@ -64,6 +65,7 @@
         "Refined Ingot": 1,
         "Gunpowder": 2
       },
+      "yield": 20,
       "techLevel": 24,
       "category": "Ammo"
     },
@@ -163,6 +165,7 @@
         "Bone": 1,
         "Pal Fluids": 1
       },
+      "yield": 10,
       "techLevel": 10,
       "category": "Components"
     },
@@ -241,6 +244,7 @@
         "Ingot": 1,
         "Gunpowder": 1
       },
+      "yield": 20,
       "techLevel": 10,
       "category": "Ammo"
     },
@@ -437,6 +441,7 @@
         "Stone": 3,
         "Flame Organ": 1
       },
+      "yield": 10,
       "techLevel": 4,
       "category": "Ammo"
     },
@@ -523,6 +528,7 @@
         "Ingot": 1,
         "Gunpowder": 1
       },
+      "yield": 20,
       "techLevel": 14,
       "category": "Ammo"
     },
@@ -867,6 +873,7 @@
       "ingredients": {
         "Ingot": 1
       },
+      "yield": 5,
       "techLevel": 3,
       "category": "Components"
     },
@@ -1019,6 +1026,7 @@
         "Stone": 3,
         "Venom Gland": 1
       },
+      "yield": 10,
       "techLevel": 5,
       "category": "Ammo"
     },
@@ -1145,6 +1153,7 @@
         "Refined Ingot": 1,
         "Gunpowder": 2
       },
+      "yield": 10,
       "techLevel": 18,
       "category": "Ammo"
     },
@@ -1154,6 +1163,7 @@
         "Pal Metal Ingot": 2,
         "Gunpowder": 5
       },
+      "yield": 10,
       "techLevel": 40,
       "category": "Ammo"
     },
@@ -1192,6 +1202,7 @@
         "Refined Ingot": 1,
         "Gunpowder": 2
       },
+      "yield": 10,
       "techLevel": 26,
       "category": "Ammo"
     },

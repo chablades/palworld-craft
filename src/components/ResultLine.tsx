@@ -16,6 +16,8 @@ interface ResultLineProps {
   showUsedBy?: boolean;
   /** Show need/have totals colored by Storage sufficiency. */
   showNeedHave?: boolean;
+  /** Units this craft overshoots by when a batch recipe produces more than the plan needs. */
+  spare?: number;
   step?: number;
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
@@ -28,6 +30,7 @@ export function ResultLine({
   showTech = false,
   showUsedBy = false,
   showNeedHave = false,
+  spare,
   step,
   checked,
   onCheckedChange,
@@ -124,6 +127,9 @@ export function ResultLine({
             <p className="font-semibold" aria-label={`Need ${line.required}`}>
               {line.required}
             </p>
+          )}
+          {spare !== undefined && spare > 0 && (
+            <p className="text-[11px] text-muted-foreground">{spare} spare</p>
           )}
         </div>
       </div>

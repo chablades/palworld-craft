@@ -4,12 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getRawNames, groupItemsByCategory } from "@/lib/recipes";
+import { getAllItemNames, groupItemsByCategory } from "@/lib/recipes";
 import { loadInventory, saveInventory } from "@/lib/storage";
 import type { InventoryMap } from "@/lib/types";
 
 export function StorageTracker() {
-  const rawNames = useMemo(() => getRawNames(), []);
+  const itemNames = useMemo(() => getAllItemNames(), []);
   const [inventory, setInventory] = useState<InventoryMap>({});
   const [hydrated, setHydrated] = useState(false);
   const [filter, setFilter] = useState("");
@@ -24,7 +24,7 @@ export function StorageTracker() {
     saveInventory(inventory);
   }, [inventory, hydrated]);
 
-  const groups = useMemo(() => groupItemsByCategory(filter, rawNames), [filter, rawNames]);
+  const groups = useMemo(() => groupItemsByCategory(filter, itemNames), [filter, itemNames]);
   const storedCount = Object.values(inventory).filter((n) => n > 0).length;
 
   function setOwned(name: string, owned: number) {
@@ -42,8 +42,8 @@ export function StorageTracker() {
         <CardHeader>
           <CardTitle>Storage</CardTitle>
           <CardDescription>
-            Track how many Pal materials and other raws you already have. This stays separate from
-            the calculator so craft plans always show full ingredient needs.
+            Track how many materials you already have — raws and crafted intermediates alike. This
+            stays separate from the calculator so craft plans always show full ingredient needs.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap items-center gap-3">

@@ -2,6 +2,28 @@
 
 All notable updates to Palcraft are listed here. Newest entries first.
 
+## 2026-08-20
+
+- Add audited batch yields from paldb.cc (Palworld 1.0), cutting large overestimates:
+  Arrow x10, Fire Arrow x10, Poison Arrow x10, Coarse Ammo x20, Handgun Ammo x20,
+  Assault Rifle Ammo x20, Rifle Ammo x10, Shotgun Shells x10, Rocket Ammo x10, Nail x5, Cement x10
+  (sources: paldb.cc/en/Arrow, /Fire_Arrow, /Poison_Arrow, /Coarse_Ammo, /Handgun_Ammo,
+  /Assault_Rifle_Ammo, /Rifle_Ammo, /Shotgun_Shell, /Rocket_Ammo, /Nail, /Cement)
+- Verified as single-output and left unchanged: Gunpowder, Ingot, Refined Ingot, Charcoal, Cloth,
+  Pal Sphere, Frag Grenade, Shock Grenade (paldb.cc/en/<item>)
+- Show spare units on crafting lines when a batch recipe overshoots the plan
+- Move exact expansion assertions onto fixtures so sourced recipe corrections cannot break logic tests
+- Model craft yields: recipes can declare `yield` (units produced per craft) for batch recipes like arrows and ammo
+- Rewrite recipe expansion to pool demand per item and split it into whole crafts once, instead of rounding up separately in each branch
+- Pool demand across `calculateBatch` line items so repeated or shared entries share batches
+- Make the crafting tree scale ingredients by whole crafts rather than requested units
+- Fix Crafting Order panel showing every intermediate as short: Storage now tracks crafted items too, not just raws
+- Fix service worker precaching the paused /browse and /shopping-list routes; precache /storage and /tree instead (cache bumped to v2)
+- Stop the service worker caching redirect and error responses, which rejected Cache.put()
+- Remove the dead Compare button on item pages (Compare is paused and redirects home)
+- Drop paused shopping-list wording from the page description and PWA manifest
+- Add npm test: 29 node:test cases over recipe expansion, craft yields and batching, craft ordering, inventory offsets, and recipe/asset data integrity
+
 ## 2026-07-30
 
 - Calculator shows need/have per material (red if Storage is short, green if enough)

@@ -4,6 +4,7 @@ import type {
   InventoryMap,
   OffsetLine,
   RecipeBookData,
+  RecipeDefinition,
   RecipeEntry,
   ShoppingListItem,
   TreeNode,
@@ -156,90 +157,115 @@ function addCounts(target: Record<string, number>, key: string, amount: number) 
   target[key] = (target[key] ?? 0) + amount;
 }
 
+/** Units produced by one craft. Recipes without an explicit yield produce a single unit. */
+export function getYield(entry: RecipeDefinition): number {
+  const produced = entry.yield;
+  return produced !== undefined && Number.isInteger(produced) && produced > 0 ? produced : 1;
+}
+
 /**
- * Port of the Python Recipe._calculate logic.
- * Recursively expands crafted ingredients into raw materials and intermediate crafts.
+ * Reachable items ordered so every consumer comes before the ingredients it consumes.
+ * Reverse depth-first post-order over the dependency DAG.
  */
-function calculateInternal(
-  itemName: string,
-  amount: number,
+function consumersFirstOrder(
+  roots: string[],
+  recipes: Record<string, RecipeEntry>,
+): string[] {
+  const visited = new Set<string>();
+  const postOrder: string[] = [];
+
+  function visit(name: string) {
+    if (visited.has(name)) return;
+    visited.add(name);
+
+    const entry = recipes[name];
+    if (entry === undefined) {
+      throw new Error(`Missing recipe for ${name}`);
+    }
+    if (isRecipe(entry)) {
+      for (const ingredient of Object.keys(entry.ingredients)) visit(ingredient);
+    }
+    postOrder.push(name);
+  }
+
+  for (const root of roots) visit(root);
+  return postOrder.reverse();
+}
+
+/**
+ * Expands seeded demand into raw materials and intermediate crafts.
+ *
+ * Demand is summed across every consumer of an item before it is divided into batches,
+ * so a batch recipe shared by two consumers is rounded up once instead of once per consumer.
+ */
+function expandDemand(
+  seed: Map<string, number>,
   recipes: Record<string, RecipeEntry>,
 ): CalculationResult {
   const raws: Record<string, number> = {};
   const crafts: Record<string, number> = {};
+  const leftovers: Record<string, number> = {};
+  const demand = new Map(seed);
 
-  const entry = recipes[itemName];
-  if (entry === undefined) {
-    throw new Error(`Missing recipe for ${itemName}`);
-  }
+  for (const name of consumersFirstOrder([...seed.keys()], recipes)) {
+    const needed = demand.get(name) ?? 0;
+    if (needed <= 0) continue;
 
-  if (isRaw(entry)) {
-    addCounts(raws, itemName, amount);
-    return { raws, crafts };
-  }
-
-  addCounts(crafts, itemName, amount);
-
-  for (const [ingredient, quantity] of Object.entries(entry.ingredients)) {
-    const needed = amount * quantity;
-    const subEntry = recipes[ingredient];
-
-    if (subEntry === undefined) {
-      throw new Error(`Missing recipe for ${ingredient}`);
+    const entry = recipes[name];
+    if (isRaw(entry)) {
+      addCounts(raws, name, needed);
+      continue;
     }
 
-    if (isRaw(subEntry)) {
-      addCounts(raws, ingredient, needed);
-    } else {
-      const sub = calculateInternal(ingredient, needed, recipes);
-      for (const [raw, qty] of Object.entries(sub.raws)) {
-        addCounts(raws, raw, qty);
-      }
-      for (const [craft, qty] of Object.entries(sub.crafts)) {
-        addCounts(crafts, craft, qty);
-      }
+    const perCraft = getYield(entry);
+    const batches = Math.ceil(needed / perCraft);
+    const produced = batches * perCraft;
+    addCounts(crafts, name, produced);
+    if (produced > needed) {
+      addCounts(leftovers, name, produced - needed);
+    }
+
+    for (const [ingredient, quantity] of Object.entries(entry.ingredients)) {
+      demand.set(ingredient, (demand.get(ingredient) ?? 0) + batches * quantity);
     }
   }
 
-  return { raws, crafts };
+  return { raws, crafts, leftovers };
 }
 
 export function calculateRecipe(
   itemName: string,
   amount: number,
+  recipes: Record<string, RecipeEntry> = book.recipes,
 ): CalculationResult {
   if (amount <= 0) {
-    return { raws: {}, crafts: {} };
+    return { raws: {}, crafts: {}, leftovers: {} };
   }
 
-  const entry = book.recipes[itemName];
-  if (entry === undefined) {
+  if (recipes[itemName] === undefined) {
     throw new Error(`Missing recipe for ${itemName}`);
   }
 
-  if (isRaw(entry)) {
-    return { raws: { [itemName]: amount }, crafts: {} };
-  }
-
-  return calculateInternal(itemName, amount, book.recipes);
+  return expandDemand(new Map([[itemName, amount]]), recipes);
 }
 
-export function calculateBatch(items: ShoppingListItem[]): CalculationResult {
-  const raws: Record<string, number> = {};
-  const crafts: Record<string, number> = {};
+/** Demand across the whole list is pooled, so shared batch recipes round up once. */
+export function calculateBatch(
+  items: ShoppingListItem[],
+  recipes: Record<string, RecipeEntry> = book.recipes,
+): CalculationResult {
+  const seed = new Map<string, number>();
 
   for (const item of items) {
     if (!item.name || item.amount <= 0) continue;
-    const result = calculateRecipe(item.name, item.amount);
-    for (const [raw, qty] of Object.entries(result.raws)) {
-      addCounts(raws, raw, qty);
+    if (recipes[item.name] === undefined) {
+      throw new Error(`Missing recipe for ${item.name}`);
     }
-    for (const [craft, qty] of Object.entries(result.crafts)) {
-      addCounts(crafts, craft, qty);
-    }
+    seed.set(item.name, (seed.get(item.name) ?? 0) + item.amount);
   }
 
-  return { raws, crafts };
+  if (seed.size === 0) return { raws: {}, crafts: {}, leftovers: {} };
+  return expandDemand(seed, recipes);
 }
 
 export function sortedEntries(counts: Record<string, number>): [string, number][] {
@@ -351,10 +377,11 @@ export function sortedCraftEntries(
 export function buildCraftingTree(
   itemName: string,
   quantity: number,
+  recipes: Record<string, RecipeEntry> = book.recipes,
   path: string[] = [],
 ): TreeNode {
   const id = [...path, itemName].join(">");
-  const entry = book.recipes[itemName];
+  const entry = recipes[itemName];
 
   if (entry === undefined) {
     throw new Error(`Missing recipe for ${itemName}`);
@@ -370,13 +397,16 @@ export function buildCraftingTree(
     };
   }
 
+  // Ingredient amounts follow whole crafts, so a batch recipe does not overstate its inputs.
+  const batches = Math.ceil(quantity / getYield(entry));
+
   return {
     id,
     name: itemName,
     quantity,
     isRaw: false,
     children: Object.entries(entry.ingredients).map(([ingredient, qty]) =>
-      buildCraftingTree(ingredient, quantity * qty, [...path, itemName]),
+      buildCraftingTree(ingredient, batches * qty, recipes, [...path, itemName]),
     ),
   };
 }

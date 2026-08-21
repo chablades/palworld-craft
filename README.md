@@ -5,7 +5,7 @@ Next.js + TypeScript website that expands Palworld crafting recipes into raw mat
 ## Features
 
 - **Recipe Calculator** — Main page: pick an item + quantity and see full ingredient needs (raws + crafts)
-- **Storage** — Separate tab to log owned Pal materials / raws (`/storage`); does not alter calculator totals
+- **Storage** — Separate tab to log owned materials, raws and crafted intermediates alike (`/storage`); does not alter calculator totals
 - **Crafting Tree** — Looked-up item is the parent node; ingredients fan out as children (`/tree?item=...`)
 - **Per-item pages** — Dedicated recipe pages at `/item/...`
 - **Favorites / checklists** — Star items and check off gathering progress
@@ -42,6 +42,15 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Tests
+
+```bash
+npm test
+```
+
+Node’s built-in test runner (via `tsx`, no extra dependencies). Covers recipe expansion,
+craft ordering, inventory offsets, and recipe/asset data integrity.
+
 ## Asset policy
 
 Item icons are original placeholders. Official Palworld art is not redistributed — see [`docs/ASSETS.md`](docs/ASSETS.md).
@@ -65,6 +74,10 @@ Objects with an `ingredients` map and optional `station`:
   }
 }
 ```
+
+- `yield` — units produced per craft, for batch recipes like arrows and ammo. Omit it for
+  the usual one-per-craft recipes. Demand is pooled across every consumer before it is split
+  into whole crafts, so a shared batch recipe is rounded up once rather than once per consumer.
 
 ### Raw materials
 
@@ -93,7 +106,7 @@ Richer form (optional metadata):
 **Crafting tree:** `/tree?item=AI%20Core&qty=1`
 
 - `item` / `qty` — calculator or tree target
-- Owned materials are tracked on `/storage` (browser `localStorage`), separate from calculator totals
+- Owned materials are tracked on `/storage` (browser `localStorage`), separate from calculator totals; the Calculator reads them for its need/have column
 
 ## Convert recipes to JSON
 
@@ -137,6 +150,7 @@ src/
   components/          # Feature UI + shadcn primitives
   data/recipes.json    # Recipe book
   lib/                 # Types, calculator, share/storage helpers, converter
+tests/                 # node:test suites for calculator logic + data integrity
 scripts/
   convert-recipes.ts   # CLI converter
   expand-recipes.mjs   # Curated batch expansion helper

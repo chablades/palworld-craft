@@ -1,7 +1,7 @@
 {
   "name": "Palcraft",
   "short_name": "Palcraft",
-  "description": "Palworld recipe calculator — raw materials, crafting order, and shopping lists.",
+  "description": "Palworld recipe calculator — raw materials, crafting order, and storage tracking.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f4f7fb",

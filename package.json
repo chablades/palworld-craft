@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "tsx --test \"tests/*.test.ts\"",
     "convert-recipes": "tsx scripts/convert-recipes.ts",
     "generate-item-placeholders": "node scripts/generate-item-placeholders.mjs",
     "generate-pwa-icons": "node scripts/generate-pwa-icons.mjs",

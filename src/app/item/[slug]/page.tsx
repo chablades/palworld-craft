@@ -72,9 +72,6 @@ export default async function ItemPage({ params }: PageProps) {
               <Button asChild variant="outline">
                 <Link href={`/tree?item=${encodeURIComponent(name)}`}>Crafting tree</Link>
               </Button>
-              <Button asChild variant="outline">
-                <Link href={`/compare?left=${encodeURIComponent(name)}`}>Compare</Link>
-              </Button>
             </>
           )}
         </div>
